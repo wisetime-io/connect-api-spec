@@ -1,0 +1,330 @@
+openapi: 3.0.1
+info:
+  title: WiseTime Connect API
+  version: "1.0.0"
+  description: >-
+    Use the WiseTime Connect API to build connectors to your application.
+  contact:
+    url: /docs/connect
+  x-logo:
+    url: "https://storage.googleapis.com/pi-gcp-resources/email_assets/pi-account/wt-logo-api.svg"
+    altText: WiseTime logo
+tags:
+  - name: Team Info
+  - name: Tags
+  - name: Posted Time
+servers:
+  - url: https://wisetime.io/connect/api
+paths:
+  /team/info:
+    get:
+      operationId: get-team-info
+      summary: Retrieves information about the team.
+      tags:
+        - Team Info
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamInfoResult'
+
+  /tag:
+    post:
+      operationId: tag-upsert
+      tags:
+        - Tags
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertTagRequest'
+      responses:
+        '200':
+          description: Successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpsertTagResponse'
+
+  /tag/{tagName}:
+    delete:
+      operationId: tag-delete
+      tags:
+        - Tags
+      parameters:
+        - in: path
+          name: tagName
+          required: true
+          schema:
+            type: string
+          description: URL-encoded tag name
+      responses:
+        '200':
+          description: Successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteTagResponse'
+
+  /tag/{tagName}/keyword:
+    post:
+      operationId: tag-keywords-add
+      tags:
+        - Tags
+      parameters:
+        - in: path
+          name: tagName
+          required: true
+          schema:
+            type: string
+          description: URL-encoded tag name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddKeywordsRequest'
+      responses:
+        '200':
+          description: Successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddKeywordsResponse'
+
+  /tag/{tagName}/keyword/{keyword}:
+    delete:
+      operationId: tag-keyword-delete
+      tags:
+        - Tags
+      parameters:
+        - in: path
+          name: tagName
+          required: true
+          schema:
+            type: string
+          description: URL-encoded tag name
+        - in: path
+          name: keyword
+          required: true
+          schema:
+            type: string
+          description: URL-encoded keyword to delete
+      responses:
+        '200':
+          description: Successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteKeywordResponse'
+
+  /time/postSubscribe:
+    post:
+      operationId: post-subscribe
+      summary: Suibscribe to be notified when a user posts time information to your team.
+      tags:
+        - Posted Time
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscribeRequest'
+      responses:
+        '200': 
+          description: Subscription created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscribeResult'
+      callbacks: # Callback definition
+        timePostedEvent: # Event name
+          '{$request.body#/callbackUrl}': # Refers to the passed URL                                            
+            post:
+              operationId: post-callback
+              requestBody: # Contents of the callback message
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/TimeGroup'
+              responses: # Expected responses to the callback message
+                '20x':
+                  description: Your server returns this code if it processed the posted time successfully.
+                '30x':
+                  description: Time posting marked as not successful, will be retried, except for code 301 (Permanently Moved).
+                '4xx':
+                  description: Time posting marked as not successful, wont be retried until webhook is updated.
+                '5xx':
+                  description: Time posting marked as not successful, will be retried.
+components:
+  securitySchemes:
+    ConnectApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+  schemas:  
+    UpsertTagRequest:
+      type: object
+      properties:
+        name:
+          description: "Tag name to create. If a tag by this name already exists, the tag will be updated."
+          type: string
+        description:
+          description: "Displayed in the GUI and search functions."
+          type: string
+        path:
+          description: >
+            Path at which to create the tag.
+            The path must start with a / and end with a /
+            For example /myteam/inprotech/
+            Use / to create tag in root.
+          type: string
+        additionalKeywords:
+          description: >
+            A tag is applied to a time row if one of its keywords matches text in the time row activity description.
+            Keywords provided via this property will be added to the list of existing keywords for the tag. Existing keywords won't be removed.
+          type: array
+          items:
+            type: string
+    UpsertTagResponse:
+      type: object
+    DeleteTagResponse:
+      type: object      
+    AddKeywordsRequest:
+      type: object
+      properties:
+        additionalKeywords:
+          description: >
+            New keyword for the tag.
+            Keywords provided via this property will be added to the list of existing keywords for the tag. Existing keywords won't be removed.
+          type: array
+          items:
+            type: string
+    AddKeywordsResponse:
+      type: object
+    DeleteKeywordResponse:
+      type: object
+    TimeGroup:
+      type: object
+      properties:
+        groupId:
+          type: string
+          description: A unique identifier of the TimeGroup being sent to the webhook receiver.
+        description:
+          type: string
+          description: User description for this time group. This may be blank if the user did not provide a narrative when posting their time.
+        totalDurationSecs:
+          type: integer
+          description: >
+            By default this is the sum of the time log durations in seconds.
+            It may have been edited by user before posting.  To calculate the unmodified total duration, add the items from the `timeRows` array.
+        groupName:
+          type: string
+          description: >
+            The default when a group name is created in the WiseTime console is to be assigned the name of the colour matching the group.  For example, `Blue Group`.
+            The user can rename the group from the gui.  This field may be blank in the case that the user has selected a group of rows and posted that time.
+            without explicitly creating a group.  It is therefore an optional field, and should not be assumed to be available and may be auto-generated in the absence
+            of the user having changed the default group name assigned to a given group of time activity information.
+        narrativeType:
+          type: string
+          enum:
+            - NARRATIVE_AND_TIME_ROW_ACTIVITY_DESCRIPTIONS
+            - NARRATIVE_ONLY
+          description: >
+            The user may request that the time row activity information be ignored be ignored by the web hook receiver.  
+            In the usual case, the default narrative type is `NARRATIVE_AND_TIME_ROW_ACTIVITY_DESCRIPTIONS`.
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+        timeRows:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeRow'
+        user:
+          $ref: '#/components/schemas/User'
+        durationSplitStrategy:
+          type: string
+          enum:
+            - DIVIDE_BETWEEN_TAGS
+            - WHOLE_DURATION_TO_EACH_TAG
+          description: > 
+            Only relevant when the group has more than one tag.  This instructs the endpoint whether time should be divided between tags (usualy behaviour),
+            or if `WHOLE_DURATION_TO_EACH_TAG` is set, the webhook receiver is asked to post the full/undivided time to each of the tags
+            listed in the tags array.
+    Tag:
+      type: object
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+        description:
+          type: string
+          description: >
+            Optional. The text that is displayed to the user next to the tagName in the user interface.  
+            For example, this could take the form of a matter description or a project name.
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        externalId:
+          type: string
+        businessRole:
+          type: string
+        experienceWeightingPercent:
+          type: integer
+    TimeRow:
+      type: object
+      properties:
+        activity:
+          type: string
+        description:
+          type: string
+        activityHour:
+          type: integer
+          description: The hour of the posted time in UTC. yyyyMMddhh
+        durationSecs:
+          type: integer
+        submittedDate:
+          type: integer
+          description: Time when the activity was submitted by the user in UTC. yyyyMMddhhmmSSsss
+        modifier:
+          type: string
+        source:
+          type: string
+          enum:
+            - WT_DESKTOP
+            - USER_MANUAL_TIME
+          description: >
+            This field describes the origin of the posted.
+            Time logs can either come from the desktop client (WT_DESKTOP) or be created manually by the user (USER_MANUAL_TIME)
+    SubscribeRequest:
+      type: object
+      properties:
+        callbackUrl:
+          type: string
+        callerKey:
+          type: string
+      required:
+        - callbackUrl
+    SubscribeResult:
+      type: object
+      properties:
+        webhookId:
+          type: string
+    TeamInfoResult:
+      type: object
+      properties:
+        teamName:
+          type: string
+security:
+  # the API key is required for all operations
+  - ConnectApiKeyAuth: []
