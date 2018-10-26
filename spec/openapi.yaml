@@ -121,10 +121,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/DeleteKeywordResponse'
 
-  /time/postSubscribe:
+  /postedtime/subscribe:
     post:
       operationId: post-subscribe
       summary: Suibscribe to be notified when a user posts time information to your team.
+      description: WiseTime will call your webhook with a payload of the posted time information. See the [posted time webhook documentation](/docs/connect/posted-time-webhook) for details.
       tags:
         - Posted Time
       requestBody:
@@ -211,6 +212,9 @@ components:
     TimeGroup:
       type: object
       properties:
+        callerKey:
+          type: string
+          description: A caller key that you specified when registering your webhook. You can use this field to authenticate that the request comes from WiseTime.
         groupId:
           type: string
           description: A unique identifier of the TimeGroup being sent to the webhook receiver.
@@ -311,8 +315,10 @@ components:
       properties:
         callbackUrl:
           type: string
+          description: The webhook URL that WiseTime will call to notify you of user posted time
         callerKey:
           type: string
+          description: WiseTime will send this key back to you when it calls your webhook. That way you can authenticate that the request comes from WiseTime.
       required:
         - callbackUrl
     SubscribeResult:
