@@ -125,7 +125,7 @@ paths:
     post:
       operationId: post-subscribe
       summary: Suibscribe to be notified when a user posts time information to your team.
-      description: WiseTime will call your webhook with a payload of the posted time information. See the [posted time webhook documentation](/docs/connect/posted-time-webhook) for details.
+      description: WiseTime will call your webhook with a payload of the posted time information. See the [posted time webhook documentation](/docs/connect/posted-time-webhook/) for details.
       tags:
         - Posted Time
       requestBody:
