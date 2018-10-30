@@ -33,6 +33,7 @@ paths:
   /tag:
     post:
       operationId: tag-upsert
+      summary: Create a new tag, or update the tag if it already exists
       tags:
         - Tags
       requestBody:
@@ -51,6 +52,7 @@ paths:
 
   /tag/{tagName}:
     delete:
+      summary: Delete an existing tag
       operationId: tag-delete
       tags:
         - Tags
@@ -72,6 +74,7 @@ paths:
   /tag/{tagName}/keyword:
     post:
       operationId: tag-keywords-add
+      summary: Add one or more keywords to an existing tag
       tags:
         - Tags
       parameters:
@@ -98,6 +101,7 @@ paths:
   /tag/{tagName}/keyword/{keyword}:
     delete:
       operationId: tag-keyword-delete
+      summary: Delete an existing keyword from a tag
       tags:
         - Tags
       parameters:
@@ -200,7 +204,7 @@ components:
       properties:
         additionalKeywords:
           description: >
-            New keyword for the tag.
+            One or more new keywords for the tag.
             Keywords provided via this property will be added to the list of existing keywords for the tag. Existing keywords won't be removed.
           type: array
           items:
