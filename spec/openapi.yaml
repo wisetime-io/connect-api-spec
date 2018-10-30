@@ -19,7 +19,7 @@ paths:
   /team/info:
     get:
       operationId: get-team-info
-      summary: Retrieve information about the team.
+      summary: Retrieve information about the team
       tags:
         - Team Info
       responses:
@@ -33,7 +33,7 @@ paths:
   /tag:
     post:
       operationId: tag-upsert
-      summary: Create a new tag, or update the tag if it already exists.
+      summary: Create a new tag, or update the tag if it already exists
       tags:
         - Tags
       requestBody:
@@ -53,7 +53,7 @@ paths:
   /tag/{tagName}:
     delete:
       operationId: tag-delete
-      summary: Delete an existing tag.
+      summary: Delete an existing tag
       tags:
         - Tags
       parameters:
@@ -74,7 +74,7 @@ paths:
   /tag/{tagName}/keyword:
     post:
       operationId: tag-keywords-add
-      summary: Add one or more keywords to an existing tag.
+      summary: Add one or more keywords to an existing tag
       tags:
         - Tags
       parameters:
@@ -101,7 +101,7 @@ paths:
   /tag/{tagName}/keyword/{keyword}:
     delete:
       operationId: tag-keyword-delete
-      summary: Delete an existing keyword from a tag.
+      summary: Delete an existing keyword from a tag
       tags:
         - Tags
       parameters:
@@ -128,7 +128,7 @@ paths:
   /postedtime/subscribe:
     post:
       operationId: post-subscribe
-      summary: Subscribe to be notified when a user posts time information to your team.
+      summary: Subscribe to be notified when a user posts time information to your team
       description: WiseTime will call your webhook with a payload of the posted time information. See the [posted time webhook documentation](/docs/connect/posted-time-webhook/) for details.
       tags:
         - Posted Time
@@ -168,6 +168,7 @@ paths:
 components:
   securitySchemes:
     ConnectApiKeyAuth:
+      description: See the [Authentication documentation page](/docs/connect/authentication/) for more details.
       type: apiKey
       in: header
       name: x-api-key
