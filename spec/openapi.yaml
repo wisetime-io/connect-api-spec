@@ -33,7 +33,7 @@ paths:
   /tag:
     post:
       operationId: tag-upsert
-      summary: Create a new tag, or update the tag if it already exists
+      summary: Create a new tag, or update the tag if it already exists.
       tags:
         - Tags
       requestBody:
@@ -52,7 +52,7 @@ paths:
 
   /tag/{tagName}:
     delete:
-      summary: Delete an existing tag
+      summary: Delete an existing tag.
       operationId: tag-delete
       tags:
         - Tags
@@ -74,7 +74,7 @@ paths:
   /tag/{tagName}/keyword:
     post:
       operationId: tag-keywords-add
-      summary: Add one or more keywords to an existing tag
+      summary: Add one or more keywords to an existing tag.
       tags:
         - Tags
       parameters:
@@ -101,7 +101,7 @@ paths:
   /tag/{tagName}/keyword/{keyword}:
     delete:
       operationId: tag-keyword-delete
-      summary: Delete an existing keyword from a tag
+      summary: Delete an existing keyword from a tag.
       tags:
         - Tags
       parameters:
@@ -128,7 +128,7 @@ paths:
   /postedtime/subscribe:
     post:
       operationId: post-subscribe
-      summary: Suibscribe to be notified when a user posts time information to your team.
+      summary: Subscribe to be notified when a user posts time information to your team.
       description: WiseTime will call your webhook with a payload of the posted time information. See the [posted time webhook documentation](/docs/connect/posted-time-webhook/) for details.
       tags:
         - Posted Time
