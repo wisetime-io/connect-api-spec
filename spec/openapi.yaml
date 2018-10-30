@@ -19,7 +19,7 @@ paths:
   /team/info:
     get:
       operationId: get-team-info
-      summary: Retrieves information about the team.
+      description: Retrieves information about the team.
       tags:
         - Team Info
       responses:
@@ -33,7 +33,7 @@ paths:
   /tag:
     post:
       operationId: tag-upsert
-      summary: Create a new tag, or update the tag if it already exists.
+      description: Create a new tag, or update the tag if it already exists.
       tags:
         - Tags
       requestBody:
@@ -52,8 +52,8 @@ paths:
 
   /tag/{tagName}:
     delete:
-      summary: Delete an existing tag.
       operationId: tag-delete
+      description: Delete an existing tag.
       tags:
         - Tags
       parameters:
@@ -74,7 +74,7 @@ paths:
   /tag/{tagName}/keyword:
     post:
       operationId: tag-keywords-add
-      summary: Add one or more keywords to an existing tag.
+      description: Add one or more keywords to an existing tag.
       tags:
         - Tags
       parameters:
@@ -101,7 +101,7 @@ paths:
   /tag/{tagName}/keyword/{keyword}:
     delete:
       operationId: tag-keyword-delete
-      summary: Delete an existing keyword from a tag.
+      description: Delete an existing keyword from a tag.
       tags:
         - Tags
       parameters:
