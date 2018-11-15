@@ -7,8 +7,8 @@ info:
   contact:
     url: /docs/connect
   x-logo:
-    url: "https://storage.googleapis.com/pi-gcp-resources/email_assets/pi-account/wt-logo-api.svg"
-    altText: WiseTime logo
+    url: "https://storage.googleapis.com/pi-gcp-resources/email_assets/pi-account/wt-connect-logo.svg"
+    altText: WiseTime Connect
 tags:
   - name: Team Info
   - name: Tags
