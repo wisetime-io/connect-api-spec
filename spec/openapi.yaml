@@ -301,8 +301,8 @@ components:
         durationSecs:
           type: integer
         submittedDate:
-          type: integer
-          description: Time when the activity was submitted by the user in UTC. yyyyMMddhhmmSSsss
+          type: long
+          description: Time when the activity was submitted by the user in UTC. yyyyMMddHHmmSSsss
         modifier:
           type: string
         source:
