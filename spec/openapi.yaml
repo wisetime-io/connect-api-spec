@@ -180,6 +180,12 @@ components:
         description:
           description: "Displayed in the GUI and search functions."
           type: string
+        excludeTagNameKeyword:
+          description: >
+            The default behaviour when creating a tag is for the tagName to be added as a keyword for the tag.  If
+            excludeTagNameKeyword is set to true, the tagName will not be added as a keyword, unless it is explicitly
+            defined in the additionalKeywords list of the request.
+          type: boolean
         path:
           description: >
             Path at which to create the tag.
