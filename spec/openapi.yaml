@@ -158,13 +158,11 @@ paths:
                       $ref: '#/components/schemas/TimeGroup'
               responses: # Expected responses to the callback message
                 '20x':
-                  description: Your server returns this code if it processed the posted time successfully.
-                '30x':
-                  description: Time posting marked as not successful, will be retried, except for code 301 (Permanently Moved).
-                '4xx':
-                  description: Time posting marked as not successful, wont be retried until webhook is updated.
-                '5xx':
-                  description: Time posting marked as not successful, will be retried.
+                  description: This response code indicates that the time group was processed successfully.
+                '420':
+                  description: Returns this code to indicate a transient error.  The web hook post request will be retried after a delay.
+                '428':
+                  description: Returns this code when permanent failure has occurred, to signify that no retries should be made.
 components:
   securitySchemes:
     ConnectApiKeyAuth:
@@ -182,6 +180,12 @@ components:
         description:
           description: "Displayed in the GUI and search functions."
           type: string
+        excludeTagNameKeyword:
+          description: >
+            The default behaviour when creating a tag is for the tagName to be added as a keyword for the tag.  If
+            excludeTagNameKeyword is set to true, the tagName will not be added as a keyword, unless it is explicitly
+            defined in the additionalKeywords list of the request.
+          type: boolean
         path:
           description: >
             Path at which to create the tag.
@@ -303,8 +307,8 @@ components:
         durationSecs:
           type: integer
         submittedDate:
-          type: integer
-          description: Time when the activity was submitted by the user in UTC. yyyyMMddhhmmSSsss
+          type: long
+          description: Time when the activity was submitted by the user in UTC. yyyyMMddHHmmSSsss
         modifier:
           type: string
         source:
