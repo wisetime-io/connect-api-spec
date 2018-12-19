@@ -128,8 +128,8 @@ paths:
   /postedtime/subscribe:
     post:
       operationId: post-subscribe
-      summary: Subscribe to be notified when a user posts time information to your team
-      description: WiseTime will call your webhook with a payload of the posted time information. See the [posted time webhook documentation](/docs/connect/posted-time-webhook/) for details.
+      summary: Subscribe to be notified when a user posts time information to your team.
+      description: WiseTime will call your webhook with a payload of the posted time information. See the [posted time webhook documentation](/docs/connect/posted-time-webhook/) for details. Each team is limited to one webhook callback.
       tags:
         - Posted Time
       requestBody:
@@ -145,6 +145,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SubscribeResult'
+        '400':
+          description: There is already a web hook for this team.
+        '500':
+          description: An unexpected error occured.
       callbacks: # Callback definition
         timePostedEvent: # Event name
           '{$request.body#/callbackUrl}': # Refers to the passed URL                                            
@@ -163,6 +167,28 @@ paths:
                   description: Returns this code to indicate a transient error.  The web hook post request will be retried after a delay.
                 '428':
                   description: Returns this code when permanent failure has occurred, to signify that no retries should be made.
+
+  /postedtime/{webhookId}:
+    delete:
+      operationId: delete-webhook
+      summary: Delete existing webhook by id.
+      description: WiseTime will stop calling your webhook.
+      tags:
+        - Posted Time
+      parameters:
+        - in: path
+          name: webhookId
+          required: true
+          schema:
+            type: string
+          description: The id of the webhook to be deleted
+      responses:
+        '200': 
+          description: Webhook deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnsubscribeResult'
 components:
   securitySchemes:
     ConnectApiKeyAuth:
@@ -340,6 +366,8 @@ components:
       properties:
         teamName:
           type: string
+    UnsubscribeResult:
+      type: object
 security:
   # the API key is required for all operations
   - ConnectApiKeyAuth: []
