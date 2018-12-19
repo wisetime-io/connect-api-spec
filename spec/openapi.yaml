@@ -128,8 +128,8 @@ paths:
   /postedtime/subscribe:
     post:
       operationId: post-subscribe
-      summary: Subscribe to be notified when a user posts time information to your team
-      description: WiseTime will call your webhook with a payload of the posted time information. See the [posted time webhook documentation](/docs/connect/posted-time-webhook/) for details.
+      summary: Subscribe to be notified when a user posts time information to your team.
+      description: WiseTime will call your webhook with a payload of the posted time information. See the [posted time webhook documentation](/docs/connect/posted-time-webhook/) for details. Each team is limited to one webhook callback.
       tags:
         - Posted Time
       requestBody:
@@ -145,6 +145,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SubscribeResult'
+        '400':
+          description: There is already a web hook for this team.
+        '500':
+          description: An unexpected error occured.
       callbacks: # Callback definition
         timePostedEvent: # Event name
           '{$request.body#/callbackUrl}': # Refers to the passed URL                                            
