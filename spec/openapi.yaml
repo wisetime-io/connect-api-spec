@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: WiseTime Connect API
-  version: "1.0.0"
+  version: "1.0.1"
   description: >-
     Use the WiseTime Connect API to build connectors to your application.
   contact:
@@ -330,6 +330,11 @@ components:
         activityHour:
           type: integer
           description: The hour of the posted time in UTC. yyyyMMddhh
+        firstObservedInHour:
+          type: integer
+          description: >
+            To make reporting less noisy, WiseTime aggregates multiple observations of the same activity and sums time spent on the activity during each hour period.
+            The firstObservedInHour represents the minute in the activityHour when the activity was first observed. It will be an integer value between 0 and 59.
         durationSecs:
           type: integer
         submittedDate:
