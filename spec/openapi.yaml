@@ -333,8 +333,8 @@ components:
         firstObservedInHour:
           type: integer
           description: >
-            To make reporting less noisy, WiseTime aggregates multiple observations of the same activity and sums time spent on the activity during each hour period.
-            The firstObservedInHour represents the minute in the activityHour when the activity was first observed. It will be an integer value between 0 and 59.
+            The firstObservedInHour represents the minute in the activityHour when the activity was first observed.
+            It will be an integer value between 0 and 59.
         durationSecs:
           type: integer
         submittedDate:
