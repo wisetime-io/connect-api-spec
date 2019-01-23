@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: WiseTime Connect API
-  version: "1.0.0"
+  version: "1.0.1"
   description: >-
     Use the WiseTime Connect API to build connectors to your application.
   contact:
@@ -280,12 +280,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Tag'
+          description: An array of tags that were assigned to the time group. An empty array will be sent if there were no assigned tags.
         timeRows:
           type: array
           items:
             $ref: '#/components/schemas/TimeRow'
+          description: Activity time rows posted with the group. There will always be at least one time row posted.
         user:
           $ref: '#/components/schemas/User'
+          description: Information about the user who posted the time group.
         durationSplitStrategy:
           type: string
           enum:
@@ -300,8 +303,10 @@ components:
       properties:
         name:
           type: string
+          description: The name of the tag.
         path:
           type: string
+          description: The folder path of the tag, e.g. /path/to/tag/.
         description:
           type: string
           description: >
@@ -312,31 +317,51 @@ components:
       properties:
         name:
           type: string
+          description: The name of the user.
         email:
           type: string
+          description: The user’s email address.
         externalId:
           type: string
+          description: The ID that the connector should use to refer to the user when talking to the system being integrated with WiseTime. This is set through the user’s team membership.
         businessRole:
           type: string
+          description: The user’s role, set through their team membership.
         experienceWeightingPercent:
           type: integer
+          description: >
+            Experience rating assigned to the user. This is a percentage value, between 0 and 100.
+            You can use this value to apply a multiplier to the total posted time duration before sending it to the connected system.
+            For example, you may want to send 20 minutes instead of 40 minutes for a junior employee whose experience rating is 50%.
     TimeRow:
       type: object
       properties:
         activity:
           type: string
+          description: The activity performed, e.g. “Meeting”, “Microsoft Word”.
         description:
           type: string
+          description: A description of the activity, e.g. the filename of a wordprocessor document being worked on.
         activityHour:
           type: integer
           description: The hour of the posted time in UTC. yyyyMMddhh
+        firstObservedInHour:
+          type: integer
+          description: >
+            The firstObservedInHour represents the minute in the activityHour when the activity was first observed.
+            It will be an integer value between 0 and 59.
         durationSecs:
           type: integer
+          description: The duration of the activity, in seconds.
         submittedDate:
           type: long
           description: Time when the activity was submitted by the user in UTC. yyyyMMddHHmmSSsss
         modifier:
           type: string
+          description: >
+            A modifier for the time row. Modifiers can be selected by the user when posting time, and can be any string value that makes sense to the connected system when posted.
+            For example, a law firm might configure activity codes for the various activities that they have set up in their case management system, so that they can charge meetings
+            and court appearances at different rates.
         source:
           type: string
           enum:
