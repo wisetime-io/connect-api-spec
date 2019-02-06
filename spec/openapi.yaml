@@ -63,8 +63,6 @@ paths:
           description: A valid API key is required to access this resource.
         '500':
           description: An unexpected error occured.
-
-  /tag:
     delete:
       operationId: tag-delete
       summary: Delete an existing tag
@@ -119,8 +117,6 @@ paths:
           description: Tag not found.
         '500':
           description: An unexpected error occured.
-
-  /tag/keyword:
     delete:
       operationId: tag-keyword-delete
       summary: Delete an existing keyword from a tag
