@@ -1,11 +1,13 @@
 openapi: 3.0.1
 info:
   title: WiseTime Connect API
-  version: "1.0.1"
+  version: "1.1.0"
   description: >-
     Use the WiseTime Connect API to build connectors to your application.
   contact:
-    url: /docs/connect
+    name: WiseTime Connect API Support
+    email: contact@wisetime.io
+    url: https://wisetime.io/docs/connect
   x-logo:
     url: "https://storage.googleapis.com/pi-gcp-resources/email_assets/pi-account/wt-connect-logo.svg"
     altText: WiseTime Connect
@@ -24,11 +26,17 @@ paths:
         - Team Info
       responses:
         '200':
-          description: Successful response
+          description: Successfully found the team info.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TeamInfoResult'
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: Team not found.
+        '500':
+          description: An unexpected error occured.
 
   /tag:
     post:
@@ -44,46 +52,52 @@ paths:
               $ref: '#/components/schemas/UpsertTagRequest'
       responses:
         '200':
-          description: Successfully updated
+          description: Tag successfully created or updated.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UpsertTagResponse'
+        '400':
+          description: Invalid request. Tag name is required.
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
 
-  /tag/{tagName}:
+  /tag:
     delete:
       operationId: tag-delete
       summary: Delete an existing tag
       tags:
         - Tags
-      parameters:
-        - in: path
-          name: tagName
-          required: true
-          schema:
-            type: string
-          description: URL-encoded tag name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteTagRequest'
       responses:
         '200':
-          description: Successfully updated
+          description: Tag successfully updated.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeleteTagResponse'
+        '400':
+          description: Invalid request. Tag name is required.
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: Tag not found.
+        '500':
+          description: An unexpected error occured.
 
-  /tag/{tagName}/keyword:
+  /tag/keyword:
     post:
       operationId: tag-keywords-add
       summary: Add one or more keywords to an existing tag
       tags:
         - Tags
-      parameters:
-        - in: path
-          name: tagName
-          required: true
-          schema:
-            type: string
-          description: URL-encoded tag name
       requestBody:
         required: true
         content:
@@ -92,38 +106,47 @@ paths:
               $ref: '#/components/schemas/AddKeywordsRequest'
       responses:
         '200':
-          description: Successfully updated
+          description: Keyword(s) successfully added.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AddKeywordsResponse'
+        '400':
+          description: Invalid request. Tag name and additional keywords are required.
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: Tag not found.
+        '500':
+          description: An unexpected error occured.
 
-  /tag/{tagName}/keyword/{keyword}:
+  /tag/keyword:
     delete:
       operationId: tag-keyword-delete
       summary: Delete an existing keyword from a tag
       tags:
         - Tags
-      parameters:
-        - in: path
-          name: tagName
-          required: true
-          schema:
-            type: string
-          description: URL-encoded tag name
-        - in: path
-          name: keyword
-          required: true
-          schema:
-            type: string
-          description: URL-encoded keyword to delete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteKeywordRequest'
       responses:
         '200':
-          description: Successfully updated
+          description: Tag successfully deleted.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeleteKeywordResponse'
+        '400':
+          description: Invalid request. Tag name and keyword are required.
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: Tag or keyword not found.
+        '500':
+          description: An unexpected error occured.
 
   /postedtime/subscribe:
     post:
@@ -140,13 +163,17 @@ paths:
               $ref: '#/components/schemas/SubscribeRequest'
       responses:
         '200': 
-          description: Subscription created.
+          description: Webhook subscription successfully created.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SubscribeResult'
         '400':
-          description: There is already a web hook for this team.
+          description: Invalid request. Callback URL is required.
+        '409':
+          description: This team already has a registered webhook.
+        '401':
+          description: A valid API key is required to access this resource.
         '500':
           description: An unexpected error occured.
       callbacks: # Callback definition
@@ -164,7 +191,7 @@ paths:
                 '20x':
                   description: This response code indicates that the time group was processed successfully.
                 '420':
-                  description: Returns this code to indicate a transient error.  The web hook post request will be retried after a delay.
+                  description: Returns this code to indicate a transient error. The web hook post request will be retried after a delay.
                 '428':
                   description: Returns this code when permanent failure has occurred, to signify that no retries should be made.
 
@@ -184,11 +211,17 @@ paths:
           description: The id of the webhook to be deleted
       responses:
         '200': 
-          description: Webhook deleted successfully.
+          description: Webhook successfully deleted.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnsubscribeResult'
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: Webhook not found.
+        '500':
+          description: An unexpected error occured.
 components:
   securitySchemes:
     ConnectApiKeyAuth:
@@ -228,20 +261,38 @@ components:
             type: string
     UpsertTagResponse:
       type: object
+    DeleteTagRequest:
+      type: object
+      properties:
+        name:
+          description: "Tag name to delete."
+          type: string
     DeleteTagResponse:
       type: object      
     AddKeywordsRequest:
       type: object
       properties:
+        tagName:
+          type: string
+          description: "The tag to which to add the keywords."
         additionalKeywords:
-          description: >
-            One or more new keywords for the tag.
-            Keywords provided via this property will be added to the list of existing keywords for the tag. Existing keywords won't be removed.
           type: array
           items:
             type: string
+          description: >
+            One or more new keywords for the tag.
+            Keywords provided via this property will be added to the list of existing keywords for the tag. Existing keywords won't be removed.
     AddKeywordsResponse:
       type: object
+    DeleteKeywordRequest:
+      type: object
+      properties:
+        tagName:
+          type: string
+          description: "The tag from which to delete the keywords."
+        keyword:
+          type: string
+          description: "The keyword to delete."
     DeleteKeywordResponse:
       type: object
     TimeGroup:
