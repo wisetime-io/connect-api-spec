@@ -33,8 +33,6 @@ paths:
                 $ref: '#/components/schemas/TeamInfoResult'
         '401':
           description: A valid API key is required to access this resource.
-        '404':
-          description: Team not found.
         '500':
           description: An unexpected error occured.
 
@@ -63,7 +61,9 @@ paths:
           description: A valid API key is required to access this resource.
         '500':
           description: An unexpected error occured.
-    delete:
+
+  /tag/delete:
+    post:
       operationId: tag-delete
       summary: Delete an existing tag
       tags:
@@ -117,7 +117,9 @@ paths:
           description: Tag not found.
         '500':
           description: An unexpected error occured.
-    delete:
+
+  /tag/keyword/delete:
+    post:
       operationId: tag-keyword-delete
       summary: Delete an existing keyword from a tag
       tags:
@@ -184,27 +186,26 @@ paths:
                     schema:
                       $ref: '#/components/schemas/TimeGroup'
               responses: # Expected responses to the callback message
-                '20x':
+                '20X':
                   description: This response code indicates that the time group was processed successfully.
                 '420':
                   description: Returns this code to indicate a transient error. The web hook post request will be retried after a delay.
                 '428':
                   description: Returns this code when permanent failure has occurred, to signify that no retries should be made.
 
-  /postedtime/{webhookId}:
-    delete:
+  /postedtime/unsubscribe:
+    post:
       operationId: delete-webhook
-      summary: Delete existing webhook by id.
-      description: WiseTime will stop calling your webhook.
+      summary: Delete existing webhook by id, unsubscribing your application from posted time notifications.
+      description: WiseTime will stop calling your webhook when users post time to your team.
       tags:
         - Posted Time
-      parameters:
-        - in: path
-          name: webhookId
-          required: true
-          schema:
-            type: string
-          description: The id of the webhook to be deleted
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnsubscribeRequest'
       responses:
         '200': 
           description: Webhook successfully deleted.
@@ -334,7 +335,9 @@ components:
             $ref: '#/components/schemas/TimeRow'
           description: Activity time rows posted with the group. There will always be at least one time row posted.
         user:
-          $ref: '#/components/schemas/User'
+          type: object
+          items:
+            $ref: '#/components/schemas/User'
           description: Information about the user who posted the time group.
         durationSplitStrategy:
           type: string
@@ -402,7 +405,7 @@ components:
           description: The duration of the activity, in seconds.
         submittedDate:
           type: long
-          description: Time when the activity was submitted by the user in UTC. yyyyMMddHHmmSSsss
+          description: Time when the activity was submitted by the user in UTC, in the format yyyyMMddHHmmSSsss.
         modifier:
           type: string
           description: >
@@ -416,13 +419,13 @@ components:
             - USER_MANUAL_TIME
           description: >
             This field describes the origin of the posted.
-            Time logs can either come from the desktop client (WT_DESKTOP) or be created manually by the user (USER_MANUAL_TIME)
+            Time logs can either come from the desktop client (WT_DESKTOP) or be created manually by the user (USER_MANUAL_TIME).
     SubscribeRequest:
       type: object
       properties:
         callbackUrl:
           type: string
-          description: The webhook URL that WiseTime will call to notify you of user posted time
+          description: The webhook URL that WiseTime will call to notify you of user posted time.
         callerKey:
           type: string
           description: WiseTime will send this key back to you when it calls your webhook. That way you can authenticate that the request comes from WiseTime.
@@ -438,6 +441,12 @@ components:
       properties:
         teamName:
           type: string
+    UnsubscribeRequest:
+      type: object
+      properties:
+        webhookId:
+          type: string
+          description: The ID of the webhook to be deleted.
     UnsubscribeResult:
       type: object
 security:
