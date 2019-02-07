@@ -336,8 +336,7 @@ components:
           description: Activity time rows posted with the group. There will always be at least one time row posted.
         user:
           type: object
-          items:
-            $ref: '#/components/schemas/User'
+          $ref: '#/components/schemas/User'
           description: Information about the user who posted the time group.
         durationSplitStrategy:
           type: string
