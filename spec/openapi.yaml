@@ -335,9 +335,7 @@ components:
             $ref: '#/components/schemas/TimeRow'
           description: Activity time rows posted with the group. There will always be at least one time row posted.
         user:
-          type: object
           $ref: '#/components/schemas/User'
-          description: Information about the user who posted the time group.
         durationSplitStrategy:
           type: string
           enum:
@@ -363,6 +361,7 @@ components:
             For example, this could take the form of a matter description or a project name.
     User:
       type: object
+      description: Information about the user who posted the time group.
       properties:
         name:
           type: string
