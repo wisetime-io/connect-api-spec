@@ -59,6 +59,8 @@ paths:
           description: Invalid request. Tag name is required.
         '401':
           description: A valid API key is required to access this resource.
+        '402':
+          description: Number of tags plan limit exceeded.
         '500':
           description: An unexpected error occured.
 
