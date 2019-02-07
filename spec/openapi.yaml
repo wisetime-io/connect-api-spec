@@ -33,8 +33,6 @@ paths:
                 $ref: '#/components/schemas/TeamInfoResult'
         '401':
           description: A valid API key is required to access this resource.
-        '404':
-          description: Team not found.
         '500':
           description: An unexpected error occured.
 
@@ -184,7 +182,7 @@ paths:
                     schema:
                       $ref: '#/components/schemas/TimeGroup'
               responses: # Expected responses to the callback message
-                '20x':
+                '20X':
                   description: This response code indicates that the time group was processed successfully.
                 '420':
                   description: Returns this code to indicate a transient error. The web hook post request will be retried after a delay.
@@ -334,7 +332,9 @@ components:
             $ref: '#/components/schemas/TimeRow'
           description: Activity time rows posted with the group. There will always be at least one time row posted.
         user:
-          $ref: '#/components/schemas/User'
+          type: object
+          items:
+            $ref: '#/components/schemas/User'
           description: Information about the user who posted the time group.
         durationSplitStrategy:
           type: string
