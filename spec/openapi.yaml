@@ -148,6 +148,36 @@ paths:
         '500':
           description: An unexpected error occured.
 
+  /postedtime:
+    get:
+      operationId: fetch-posted-time
+      summary: Returns posted time for the team associated with the provided api key.
+      description: This is a long polling call. The connection will be held open until there is a new posted time event. This is an alternative for the webhook mechanism.
+      tags:
+        - Posted Time
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          required: false
+          description: Maximum amount of posted time entries to retrieve. If not set or 0 all available will be returned.
+      responses:
+        '200': 
+          description: List of posted time events.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TimeGroup'
+        '400':
+          description: Invalid request. Limit cannot be smaller than 0.
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.  
+
   /postedtime/subscribe:
     post:
       operationId: post-subscribe
