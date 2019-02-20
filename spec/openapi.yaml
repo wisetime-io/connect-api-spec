@@ -152,7 +152,7 @@ paths:
     get:
       operationId: fetch-posted-time
       summary: Returns posted time for the team associated with the provided api key.
-      description: This is a long polling call. The connection will be held open until there is a new posted time event. This is an alternative for the webhook mechanism.
+      description: This is a long polling call. The connection will be held open for a maximum of 60 seconds or until there is a new posted time event. This is an alternative for the webhook mechanism.
       tags:
         - Posted Time
       parameters:
@@ -161,7 +161,7 @@ paths:
           schema:
             type: integer
           required: false
-          description: Maximum amount of posted time entries to retrieve. If not set or 0 all available will be returned.
+          description: Maximum amount of posted time entries to retrieve. If not set, the API will return up to a maximum of 25 entries for each request.
       responses:
         '200': 
           description: List of posted time events.
@@ -172,7 +172,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/TimeGroup'
         '400':
-          description: Invalid request. Limit cannot be smaller than 0.
+          description: Invalid request. Limit cannot be smaller than 1.
         '401':
           description: A valid API key is required to access this resource.
         '500':
