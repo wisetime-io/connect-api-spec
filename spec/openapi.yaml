@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: WiseTime Connect API
-  version: "1.1.0"
+  version: "1.2.0"
   description: >-
     Use the WiseTime Connect API to build connectors to your application.
   contact:
