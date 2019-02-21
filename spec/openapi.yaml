@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: WiseTime Connect API
-  version: "1.1.0"
+  version: "1.2.0"
   description: >-
     Use the WiseTime Connect API to build connectors to your application.
   contact:
@@ -147,6 +147,36 @@ paths:
           description: Tag or keyword not found.
         '500':
           description: An unexpected error occured.
+
+  /postedtime:
+    get:
+      operationId: fetch-posted-time
+      summary: Returns posted time for the team associated with the provided api key.
+      description: This is a long polling call. The connection will be held open for a maximum of 60 seconds or until there is a new posted time event. This is an alternative for the webhook mechanism.
+      tags:
+        - Posted Time
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          required: false
+          description: Maximum amount of posted time entries to retrieve. If not set, the API will return up to a maximum of 25 entries for each request.
+      responses:
+        '200': 
+          description: List of posted time events.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TimeGroup'
+        '400':
+          description: Invalid request. Limit cannot be smaller than 1.
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.  
 
   /postedtime/subscribe:
     post:
