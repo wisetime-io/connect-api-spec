@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: WiseTime Connect API
-  version: "1.2.0"
+  version: "1.2.1"
   description: >-
     Use the WiseTime Connect API to build connectors to your application.
   contact:
@@ -163,7 +163,7 @@ paths:
           required: false
           description: Maximum amount of posted time entries to retrieve. If not set, the API will return up to a maximum of 25 entries for each request.
       responses:
-        '200': 
+        '200':
           description: List of posted time events.
           content:
             application/json:
@@ -176,7 +176,7 @@ paths:
         '401':
           description: A valid API key is required to access this resource.
         '500':
-          description: An unexpected error occured.  
+          description: An unexpected error occured.
 
   /postedtime/subscribe:
     post:
@@ -192,7 +192,7 @@ paths:
             schema:
               $ref: '#/components/schemas/SubscribeRequest'
       responses:
-        '200': 
+        '200':
           description: Webhook subscription successfully created.
           content:
             application/json:
@@ -239,7 +239,7 @@ paths:
             schema:
               $ref: '#/components/schemas/UnsubscribeRequest'
       responses:
-        '200': 
+        '200':
           description: Webhook successfully deleted.
           content:
             application/json:
@@ -258,7 +258,7 @@ components:
       type: apiKey
       in: header
       name: x-api-key
-  schemas:  
+  schemas:
     UpsertTagRequest:
       type: object
       properties:
@@ -297,7 +297,7 @@ components:
           description: "Tag name to delete."
           type: string
     DeleteTagResponse:
-      type: object      
+      type: object
     AddKeywordsRequest:
       type: object
       properties:
@@ -368,13 +368,15 @@ components:
           description: Activity time rows posted with the group. There will always be at least one time row posted.
         user:
           $ref: '#/components/schemas/User'
+        associatedUser:
+          $ref: '#/components/schemas/AssociatedUser'
         durationSplitStrategy:
           type: string
           enum:
             - DIVIDE_BETWEEN_TAGS
             - WHOLE_DURATION_TO_EACH_TAG
-          description: > 
-            Only relevant when the group has more than one tag.  This instructs the endpoint whether time should be divided between tags (usualy behaviour),
+          description: >
+            Only relevant when the group has more than one tag.  This instructs the endpoint whether time should be divided between tags (usual behaviour),
             or if `WHOLE_DURATION_TO_EACH_TAG` is set, the webhook receiver is asked to post the full/undivided time to each of the tags
             listed in the tags array.
     Tag:
@@ -411,6 +413,28 @@ components:
           type: integer
           description: >
             Experience rating assigned to the user. This is a percentage value, between 0 and 100.
+            You can use this value to apply a multiplier to the total posted time duration before sending it to the connected system.
+            For example, you may want to send 20 minutes instead of 40 minutes for a junior employee whose experience rating is 50%.
+    AssociatedUser:
+      type: object
+      description: Optional. Information about the user associated with the time group (not the user that posted it).
+      properties:
+        name:
+          type: string
+          description: The name of the associated user.
+        email:
+          type: string
+          description: The associated user’s email address.
+        externalId:
+          type: string
+          description: The ID that the connector should use to refer to the associated user when talking to the system being integrated with WiseTime. This is set through the associated user’s team membership.
+        businessRole:
+          type: string
+          description: The associated user’s role, set through their team membership.
+        experienceWeightingPercent:
+          type: integer
+          description: >
+            Experience rating assigned to the associated user. This is a percentage value, between 0 and 100.
             You can use this value to apply a multiplier to the total posted time duration before sending it to the connected system.
             For example, you may want to send 20 minutes instead of 40 minutes for a junior employee whose experience rating is 50%.
     TimeRow:
