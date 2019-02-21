@@ -369,7 +369,7 @@ components:
         user:
           $ref: '#/components/schemas/User'
         associatedUser:
-          $ref: '#/components/schemas/AssociatedUser'
+          $ref: '#/components/schemas/User'
         durationSplitStrategy:
           type: string
           enum:
@@ -413,28 +413,6 @@ components:
           type: integer
           description: >
             Experience rating assigned to the user. This is a percentage value, between 0 and 100.
-            You can use this value to apply a multiplier to the total posted time duration before sending it to the connected system.
-            For example, you may want to send 20 minutes instead of 40 minutes for a junior employee whose experience rating is 50%.
-    AssociatedUser:
-      type: object
-      description: Optional. Information about the user associated with the time group (not the user that posted it).
-      properties:
-        name:
-          type: string
-          description: The name of the associated user.
-        email:
-          type: string
-          description: The associated user’s email address.
-        externalId:
-          type: string
-          description: The ID that the connector should use to refer to the associated user when talking to the system being integrated with WiseTime. This is set through the associated user’s team membership.
-        businessRole:
-          type: string
-          description: The associated user’s role, set through their team membership.
-        experienceWeightingPercent:
-          type: integer
-          description: >
-            Experience rating assigned to the associated user. This is a percentage value, between 0 and 100.
             You can use this value to apply a multiplier to the total posted time duration before sending it to the connected system.
             For example, you may want to send 20 minutes instead of 40 minutes for a junior employee whose experience rating is 50%.
     TimeRow:
