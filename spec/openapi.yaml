@@ -178,6 +178,27 @@ paths:
         '500':
           description: An unexpected error occured.
 
+  /postedtime/status:
+    post:
+      operationId: update-posted-time-status
+      summary: Updates the status of the received time groups.
+      tags:
+        - Posted Time
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TimeGroupStatus'
+      responses:
+        '200':
+          description: Status of time groups was updates successfully.
+        '400':
+          description: Invalid request.
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
   /postedtime/subscribe:
     post:
       operationId: post-subscribe
@@ -481,6 +502,26 @@ components:
           description: The ID of the webhook to be deleted.
     UnsubscribeResult:
       type: object
+    TimeGroupStatus:
+      type: array
+      items:
+        type: object
+        properties:
+          timeGroupId:
+            type: string
+            description: ID of the time group to be updated.
+          status:
+            type: string
+            enum:
+              - SUCCESS
+              - FAILURE
+            description: >
+              This field describes the status of the posted time group.
+              On SUCCESS the time group will be marked as successfully posted.
+              On FAILURE the time group will be marked as failed and the attached message will displayed to the user.
+          message:
+            type: string
+            description: Reason for the failure, will be displayed to the user.
 security:
   # the API key is required for all operations
   - ConnectApiKeyAuth: []
