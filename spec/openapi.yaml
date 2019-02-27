@@ -187,7 +187,7 @@ paths:
   /postedtime/registerFetchClient:
     post:
       operationId: register-for-fetch
-      summary: Register the intend to fetch time from the /postedtime endpoint.
+      summary: Register the intent to fetch time from the /postedtime endpoint.
       description: WiseTime will start recording posted time events that can be fetched via the /postedtime endpoint.
       tags:
         - Posted Time
@@ -228,7 +228,7 @@ paths:
               $ref: '#/components/schemas/UnregisterFetchClientRequest'
       responses:
         '200':
-          description: Fetch client successfully deleted.
+          description: Fetch client successfully unregistered.
           content:
             application/json:
               schema:
@@ -577,7 +577,7 @@ components:
       properties:
         fetchClientId:
           type: string
-          description: The ID of the fetch client to be deleted.
+          description: The ID of the fetch client to be unregistered.
     UnregisterFetchClientResult:
       type: object
     TimeGroupStatus:
