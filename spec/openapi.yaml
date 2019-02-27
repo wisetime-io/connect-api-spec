@@ -148,14 +148,20 @@ paths:
         '500':
           description: An unexpected error occured.
 
-  /postedtime:
+  /postedtime/{fetchClientId}:
     get:
       operationId: fetch-posted-time
-      summary: Returns posted time for the team associated with the provided api key.
+      summary: Returns posted time for the registered fetch client provided in the url.
       description: This is a long polling call. The connection will be held open for a maximum of 60 seconds or until there is a new posted time event. This is an alternative for the webhook mechanism.
       tags:
         - Posted Time
       parameters:
+        - in: path
+          name: fetchClientId
+          schema:
+            type: string
+          required: true
+          description: The id of the registered fetch client.
         - in: query
           name: limit
           schema:
@@ -178,10 +184,67 @@ paths:
         '500':
           description: An unexpected error occured.
 
+  /postedtime/registerFetchClient:
+    post:
+      operationId: register-for-fetch
+      summary: Register the intend to fetch time from the /postedtime endpoint.
+      description: WiseTime will start recording posted time events that can be fetched via the /postedtime endpoint.
+      tags:
+        - Posted Time
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterFetchClientRequest'
+      responses:
+        '200':
+          description: Fetch client successfully registered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterFetchClientResult'
+        '400':
+          description: Invalid request. Callback URL is required.
+        '409':
+          description: This team already has a registered fetch client or webhook.
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
+  /postedtime/unregisterFetchClient:
+    post:
+      operationId: unregister-from-fetch
+      summary: Delete existing fetch client by id, unsubscribing your application from posted time fetching.
+      description: WiseTime will stop recording posted time events for fetch when users post time to your team.
+      tags:
+        - Posted Time
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnregisterFetchClientRequest'
+      responses:
+        '200':
+          description: Fetch client successfully deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnregisterFetchClientResult'
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: Fetch client not found.
+        '500':
+          description: An unexpected error occured.
+
   /postedtime/status:
     post:
       operationId: update-posted-time-status
       summary: Updates the status of the received time groups.
+      description: This is intended for use with the fetch mechanism only. Not to be used with webhooks.
       tags:
         - Posted Time
       requestBody:
@@ -222,7 +285,7 @@ paths:
         '400':
           description: Invalid request. Callback URL is required.
         '409':
-          description: This team already has a registered webhook.
+          description: This team already has a registered webhook or fetch client.
         '401':
           description: A valid API key is required to access this resource.
         '500':
@@ -489,6 +552,13 @@ components:
       properties:
         webhookId:
           type: string
+    RegisterFetchClientRequest:
+      type: object
+    RegisterFetchClientResult:
+      type: object
+      properties:
+        fetchClientId:
+          type: string
     TeamInfoResult:
       type: object
       properties:
@@ -502,6 +572,14 @@ components:
           description: The ID of the webhook to be deleted.
     UnsubscribeResult:
       type: object
+    UnregisterFetchClientRequest:
+      type: object
+      properties:
+        fetchClientId:
+          type: string
+          description: The ID of the fetch client to be deleted.
+    UnregisterFetchClientResult:
+      type: object
     TimeGroupStatus:
       type: array
       items:
@@ -510,6 +588,9 @@ components:
           timeGroupId:
             type: string
             description: ID of the time group to be updated.
+          fetchClientId:
+            type: string
+            description: The id of the fetch client that received this time group.
           status:
             type: string
             enum:
