@@ -255,6 +255,10 @@ paths:
       responses:
         '200':
           description: Status of time groups was updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeGroupStatusResult'
         '400':
           description: Invalid request.
         '401':
