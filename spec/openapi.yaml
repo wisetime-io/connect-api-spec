@@ -607,6 +607,25 @@ components:
           message:
             type: string
             description: Reason for the failure, will be displayed to the user.
+    TimeGroupStatusResult:
+      type: array
+      items:
+        type: object
+        properties:
+          timeGroupId:
+            type: string
+            description: ID of the time group to be updated.
+          fetchClientId:
+            type: string
+            description: The id of the fetch client that received this time group.
+          updateStatus:
+            type: string
+            enum:
+              - SUCCESS
+              - TIME_GROUP_NOT_FOUND
+              - UNEXPECTED_ERROR
+            description: >
+              This field describes the result of the status update for the given time group and fetch client.
 security:
   # the API key is required for all operations
   - ConnectApiKeyAuth: []
