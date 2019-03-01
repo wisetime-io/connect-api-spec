@@ -413,7 +413,7 @@ components:
       properties:
         callerKey:
           type: string
-          description: A caller key that you specified when registering your webhook. You can use this field to authenticate that the request comes from WiseTime.
+          description: A caller key that you specified when registering your webhook. You can use this field to authenticate that the request comes from WiseTime. This field is only set if WiseTime is calling your webhook. It is not relevant when you poll WiseTime for posted time.
         groupId:
           type: string
           description: A unique identifier of the TimeGroup being sent to the webhook receiver.
