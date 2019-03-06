@@ -254,7 +254,7 @@ paths:
               $ref: '#/components/schemas/TimeGroupStatus'
       responses:
         '200':
-          description: Status of time groups was updated successfully.
+          description: Status of the time group was updated successfully.
         '400':
           description: Invalid request.
         '401':
