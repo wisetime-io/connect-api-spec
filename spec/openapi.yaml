@@ -454,7 +454,7 @@ components:
           description: Activity time rows posted with the group. There will always be at least one time row posted.
         user:
           $ref: '#/components/schemas/User'
-        associatedUser:
+        originatingUser:
           $ref: '#/components/schemas/User'
         durationSplitStrategy:
           type: string
