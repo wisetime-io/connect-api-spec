@@ -184,7 +184,7 @@ paths:
         '500':
           description: An unexpected error occured.
 
-  /postedtime/registerFetchClient:
+  /postedtime/registerfetchclient:
     post:
       operationId: register-for-fetch
       summary: Register the intent to fetch time from the /postedtime endpoint.
@@ -213,7 +213,7 @@ paths:
         '500':
           description: An unexpected error occured.
 
-  /postedtime/unregisterFetchClient:
+  /postedtime/unregisterfetchclient:
     post:
       operationId: unregister-from-fetch
       summary: Delete existing fetch client by id, unsubscribing your application from posted time fetching.
