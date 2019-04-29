@@ -152,7 +152,9 @@ paths:
     get:
       operationId: fetch-posted-time
       summary: Returns posted time for the registered fetch client provided in the url.
-      description: This is a long polling call. The connection will be held open for a maximum of 60 seconds or until there is a new posted time event. This is an alternative for the webhook mechanism.
+      description: >
+        This is a long polling call (an alternative to using the webhook mechanism).
+        The connection will be held open for a maximum of 60 seconds or until there is a new posted time event.
       tags:
         - Posted Time
       parameters:
