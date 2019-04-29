@@ -148,22 +148,16 @@ paths:
         '500':
           description: An unexpected error occured.
 
-  /postedtime/{fetchClientId}:
+  /postedtime:
     get:
       operationId: fetch-posted-time
-      summary: Returns posted time for the registered fetch client provided in the url.
+      summary: Returns posted time for the team, if fetching was enabled previously.
       description: >
         This is a long polling call (an alternative to using the webhook mechanism).
         The connection will be held open for a maximum of 60 seconds or until there is a new posted time event.
       tags:
         - Posted Time
       parameters:
-        - in: path
-          name: fetchClientId
-          schema:
-            type: string
-          required: true
-          description: The id of the registered fetch client.
         - in: query
           name: limit
           schema:
@@ -245,8 +239,11 @@ paths:
   /postedtime/status:
     post:
       operationId: update-posted-time-status
-      summary: Updates the status of a received time group.
-      description: This is intended for use with the fetch mechanism only. Not to be used with webhooks.
+      summary: Updates the status of a received time group. Providing its success or failure to be processed.
+      description: >
+        This is intended for use with the fetch mechanism only. Not to be used with webhooks.
+        If this endpoint isn't called for a time group within a certain amount of time after fetching it
+        the time group will be made available again for fetching.
       tags:
         - Posted Time
       requestBody:
@@ -590,9 +587,6 @@ components:
         timeGroupId:
           type: string
           description: ID of the time group to be updated.
-        fetchClientId:
-          type: string
-          description: The id of the fetch client that received this time group.
         status:
           type: string
           enum:
