@@ -531,7 +531,11 @@ components:
           description: >
             A modifier for the time row. Modifiers can be selected by the user when posting time, and can be any string value that makes sense to the connected system when posted.
             For example, a law firm might configure activity codes for the various activities that they have set up in their case management system, so that they can charge meetings
-            and court appearances at different rates.
+            and court appearances at different rates. Effectively it's the human readable label for activityTypeCode.
+        activityTypeCode:
+          type: string
+          description: >
+            Activity type of time row. It can be set by the user when posting time row. List of possible values is configured by administrators on the team settings page.
         source:
           type: string
           enum:
