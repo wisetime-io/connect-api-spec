@@ -155,6 +155,8 @@ paths:
       description: >
         This is a long polling call (an alternative to using the webhook mechanism).
         The connection will be held open for a maximum of 60 seconds or until there is a new posted time event.
+        When calling this method without first calling the /postedtime/registerfetchclient endpoint, recording posted time for fetching
+        will implicitly be turned on.
       tags:
         - Posted Time
       parameters:
@@ -212,7 +214,7 @@ paths:
   /postedtime/unregisterfetchclient:
     post:
       operationId: unregister-from-fetch
-      summary: Delete existing fetch client by id, unsubscribing your application from posted time fetching.
+      summary: Delete existing fetch client, unsubscribing your application from posted time fetching.
       description: WiseTime will stop recording posted time events for fetch when users post time to your team.
       tags:
         - Posted Time
@@ -557,9 +559,6 @@ components:
       type: object
     RegisterFetchClientResult:
       type: object
-      properties:
-        fetchClientId:
-          type: string
     TeamInfoResult:
       type: object
       properties:
@@ -575,10 +574,6 @@ components:
       type: object
     UnregisterFetchClientRequest:
       type: object
-      properties:
-        fetchClientId:
-          type: string
-          description: The ID of the fetch client to be unregistered.
     UnregisterFetchClientResult:
       type: object
     TimeGroupStatus:
