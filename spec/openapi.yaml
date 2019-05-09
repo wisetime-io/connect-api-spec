@@ -151,7 +151,7 @@ paths:
   /postedtime:
     get:
       operationId: fetch-posted-time
-      summary: Returns posted time for the team, if fetching was enabled previously.
+      summary: Returns posted time for the team.
       description: >
         This is a long polling call (an alternative to using the webhook mechanism).
         The connection will be held open for a maximum of 60 seconds or until there is a new posted time event.
