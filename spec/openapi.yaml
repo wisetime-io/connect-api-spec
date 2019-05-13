@@ -568,6 +568,16 @@ components:
       properties:
         teamName:
           type: string
+        logId:
+          type: string
+          description: >
+            If service is managed, response includes a logId field. The logId field can be used to submit log output to
+            the aws logging service.
+        teamLabel:
+          type: string
+          description: >
+            If service is managed, includes an ASCII representation of the team name following punyCode specification in
+            respect of the internationalisation of domain names.
     UnsubscribeRequest:
       type: object
       properties:
