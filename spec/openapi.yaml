@@ -448,10 +448,10 @@ components:
           additionalProperties:
             type: string
           example:
-            java-vm-specification-version: 1.8
-            java-vm-version: 2.8
-            java-vm-name: IBM J9 VM
-            client-os: linux
+            java_vm_specification_version: 1.8
+            java_vm_version: 2.8
+            java_vm_name: IBM J9 VM
+            client_os: linux
         connector_type:
           type: string
           description: The paired system type that the connector supplies activity data to.
