@@ -338,6 +338,31 @@ paths:
           description: Webhook not found.
         '500':
           description: An unexpected error occured.
+
+  /team/managed/config:
+    post:
+      operationId: team-managed-config
+      summary: Retrieve configuration particulars to suppport the managed connector service.
+      tags:
+        - Connector Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManagedConfigRequest'
+      responses:
+        '200':
+          description: Managed config response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManagedConfigResponse'
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
 components:
   securitySchemes:
     ConnectApiKeyAuth:
@@ -411,6 +436,42 @@ components:
           description: "The keyword to delete."
     DeleteKeywordResponse:
       type: object
+    ManagedConfigRequest:
+      type: object
+      properties:
+        envTzOffset:
+          type: string
+          description: The local time offset of the environment that the client is running within.
+        environment:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            java-vm-specification-version: 1.8
+            java-vm-version: 2.8
+            java-vm-name: IBM J9 VM
+            client-os: linux
+        connectorType:
+          type: string
+          description: The paired system type that the connector supplies activity data to.
+        libraryVersion:
+          type: string
+          description: The client library version.
+        clientTimestamp:
+          type: number
+          format: int64
+          description: The system timestamp from epoch of the client environment.
+    ManagedConfigResponse:
+      type: object
+      properties:
+        serviceId:
+          type: string
+        serviceKey:
+          type: string
+        groupName:
+          type: string
+        regionName:
+          type: string
     TimeGroup:
       type: object
       properties:
@@ -502,47 +563,6 @@ components:
             Experience rating assigned to the user. This is a percentage value, between 0 and 100.
             You can use this value to apply a multiplier to the total posted time duration before sending it to the connected system.
             For example, you may want to send 20 minutes instead of 40 minutes for a junior employee whose experience rating is 50%.
-    TimeRow:
-      type: object
-      properties:
-        activity:
-          type: string
-          description: The activity performed, e.g. “Meeting”, “Microsoft Word”.
-        description:
-          type: string
-          description: A description of the activity, e.g. the filename of a wordprocessor document being worked on.
-        activityHour:
-          type: integer
-          description: The hour of the posted time in UTC. yyyyMMddhh
-        firstObservedInHour:
-          type: integer
-          description: >
-            The firstObservedInHour represents the minute in the activityHour when the activity was first observed.
-            It will be an integer value between 0 and 59.
-        durationSecs:
-          type: integer
-          description: The duration of the activity, in seconds.
-        submittedDate:
-          type: long
-          description: Time when the activity was submitted by the user in UTC, in the format yyyyMMddHHmmSSsss.
-        modifier:
-          type: string
-          description: >
-            A modifier for the time row. Modifiers can be selected by the user when posting time, and can be any string value that makes sense to the connected system when posted.
-            For example, a law firm might configure activity codes for the various activities that they have set up in their case management system, so that they can charge meetings
-            and court appearances at different rates. Effectively it's the human readable label for activityTypeCode.
-        activityTypeCode:
-          type: string
-          description: >
-            Activity type of time row. It can be set by the user when posting time row. List of possible values is configured by administrators on the team settings page.
-        source:
-          type: string
-          enum:
-            - WT_DESKTOP
-            - USER_MANUAL_TIME
-          description: >
-            This field describes the origin of the posted.
-            Time logs can either come from the desktop client (WT_DESKTOP) or be created manually by the user (USER_MANUAL_TIME).
     SubscribeRequest:
       type: object
       properties:
@@ -568,28 +588,6 @@ components:
       properties:
         teamName:
           type: string
-        logId:
-          type: string
-          description: >
-            If service is managed, response includes a logId field. The logId field can be used to submit log output to
-            the aws logging service.
-        teamLabel:
-          type: string
-          description: >
-            If service is managed, includes an ASCII representation of the team name following punyCode specification in
-            respect of the internationalisation of domain names.
-    UnsubscribeRequest:
-      type: object
-      properties:
-        webhookId:
-          type: string
-          description: The ID of the webhook to be deleted.
-    UnsubscribeResult:
-      type: object
-    UnregisterFetchClientRequest:
-      type: object
-    UnregisterFetchClientResult:
-      type: object
     TimeGroupStatus:
       type: object
       properties:
@@ -608,6 +606,60 @@ components:
         message:
           type: string
           description: Reason for the failure, will be displayed to the user.
+    TimeRow:
+      type: object
+      properties:
+        activity:
+          type: string
+          description: The activity performed, e.g. “Meeting”, “Microsoft Word”.
+        description:
+          type: string
+          description: A description of the activity, e.g. the filename of a wordprocessor document being worked on.
+        activityHour:
+          type: integer
+          description: The hour of the posted time in UTC. yyyyMMddhh
+        firstObservedInHour:
+          type: integer
+          description: >
+            The firstObservedInHour represents the minute in the activityHour when the activity was first observed.
+            It will be an integer value between 0 and 59.
+        durationSecs:
+          type: integer
+          description: The duration of the activity, in seconds.
+        submittedDate:
+          type: number
+          format: int64
+          description: Time when the activity was submitted by the user in UTC, in the format yyyyMMddHHmmSSsss.
+        modifier:
+          type: string
+          description: >
+            A modifier for the time row. Modifiers can be selected by the user when posting time, and can be any string value that makes sense to the connected system when posted.
+            For example, a law firm might configure activity codes for the various activities that they have set up in their case management system, so that they can charge meetings
+            and court appearances at different rates. Effectively it's the human readable label for activityTypeCode.
+        activityTypeCode:
+          type: string
+          description: >
+            Activity type of time row. It can be set by the user when posting time row. List of possible values is configured by administrators on the team settings page.
+        source:
+          type: string
+          enum:
+            - WT_DESKTOP
+            - USER_MANUAL_TIME
+          description: >
+            This field describes the origin of the posted.
+            Time logs can either come from the desktop client (WT_DESKTOP) or be created manually by the user (USER_MANUAL_TIME).
+    UnsubscribeRequest:
+      type: object
+      properties:
+        webhookId:
+          type: string
+          description: The ID of the webhook to be deleted.
+    UnsubscribeResult:
+      type: object
+    UnregisterFetchClientRequest:
+      type: object
+    UnregisterFetchClientResult:
+      type: object
 security:
   # the API key is required for all operations
   - ConnectApiKeyAuth: []
