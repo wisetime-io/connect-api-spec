@@ -312,7 +312,7 @@ paths:
                     Indicates that permanent failure has occurred, to signify that no retries should be made.
                     Returns a user-friendly error message which describes the problem.
                   content:
-                    text/plaint:
+                    text/plain:
                       schema:
                         type: string
                 '500':
@@ -320,7 +320,7 @@ paths:
                     Indicates a transient error. The web hook post request will be retried after a delay.
                     Returns a user-friendly error message which describes the problem.
                   content:
-                    text/plaint:
+                    text/plain:
                       schema:
                         type: string
 
