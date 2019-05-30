@@ -295,7 +295,7 @@ paths:
           description: An unexpected error occured.
       callbacks: # Callback definition
         timePostedEvent: # Event name
-          '{$request.body#/callbackUrl}': # Refers to the passed URL                                            
+          '{$request.body#/callbackUrl}': # Refers to the passed URL
             post:
               operationId: post-callback
               requestBody: # Contents of the callback message
@@ -307,10 +307,22 @@ paths:
               responses: # Expected responses to the callback message
                 '20X':
                   description: This response code indicates that the time group was processed successfully.
-                '420':
-                  description: Returns this code to indicate a transient error. The web hook post request will be retried after a delay.
-                '428':
-                  description: Returns this code when permanent failure has occurred, to signify that no retries should be made.
+                '400':
+                  description: >
+                    Indicates that permanent failure has occurred, to signify that no retries should be made.
+                    Returns a user-friendly error message which describes the problem.
+                  content:
+                    text/plaint:
+                      schema:
+                        type: string
+                '500':
+                  description: >
+                    Indicates a transient error. The web hook post request will be retried after a delay.
+                    Returns a user-friendly error message which describes the problem.
+                  content:
+                    text/plaint:
+                      schema:
+                        type: string
 
   /postedtime/unsubscribe:
     post:
@@ -506,7 +518,7 @@ components:
             - NARRATIVE_AND_TIME_ROW_ACTIVITY_DESCRIPTIONS
             - NARRATIVE_ONLY
           description: >
-            The user may request that the time row activity information be ignored by the web hook receiver.  
+            The user may request that the time row activity information be ignored by the web hook receiver.
             In the usual case, the default narrative type is `NARRATIVE_AND_TIME_ROW_ACTIVITY_DESCRIPTIONS`.
         tags:
           type: array
@@ -543,7 +555,7 @@ components:
         description:
           type: string
           description: >
-            Optional. The text that is displayed to the user next to the name in the user interface.  
+            Optional. The text that is displayed to the user next to the name in the user interface.
             For example, this could take the form of a matter description or a project name.
     User:
       type: object
