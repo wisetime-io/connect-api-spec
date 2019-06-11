@@ -451,9 +451,6 @@ components:
     ManagedConfigRequest:
       type: object
       properties:
-        tzOffset:
-          type: string
-          description: The local time offset of the environment that the client is running within.
         environment:
           type: object
           description: A dictionary of client runtime environment properties.
@@ -470,10 +467,13 @@ components:
         connectorLibraryVersion:
           type: string
           description: The WiseTime connector library version.
-        timestamp:
+        clientTimestamp:
           type: number
           format: int64
           description: The current system timestamp from epoch of the client environment.
+        clientTimeZoneOffset:
+          type: string
+          description: The local time offset of the environment that the client is running within.
     ManagedConfigResponse:
       type: object
       properties:
