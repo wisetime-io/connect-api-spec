@@ -464,9 +464,12 @@ components:
         connectorType:
           type: string
           description: The paired system type that the connector supplies activity data to.
+        connectorVersion:
+          type: string
+          description: The connector version.
         connectorLibraryVersion:
           type: string
-          description: The WiseTime connector library version.
+          description: The WiseTime connector library version that the connector is using.
         clientTimestamp:
           type: number
           format: int64
