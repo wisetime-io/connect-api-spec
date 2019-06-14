@@ -451,42 +451,45 @@ components:
     ManagedConfigRequest:
       type: object
       properties:
-        env_tz_offset:
-          type: string
-          description: The local time offset of the environment that the client is running within.
         environment:
           type: object
           description: A dictionary of client runtime environment properties.
           additionalProperties:
             type: string
           example:
-            java_vm_specification_version: 1.8
-            java_vm_version: 2.8
-            java_vm_name: IBM J9 VM
-            client_os: linux
-        connector_type:
+            javaVmSpecificationVersion: 1.8
+            javaVmVersion: 2.8
+            javaVmName: IBM J9 VM
+            clientOs: linux
+        connectorType:
           type: string
           description: The paired system type that the connector supplies activity data to.
-        library_version:
+        connectorVersion:
           type: string
-          description: The client library version.
-        client_ts:
+          description: The connector version.
+        connectorLibraryVersion:
+          type: string
+          description: The WiseTime connector library version that the connector is using.
+        clientTimestamp:
           type: number
           format: int64
-          description: The system timestamp from epoch of the client environment.
+          description: The current system timestamp from epoch of the client environment.
+        clientTimeZoneOffset:
+          type: string
+          description: The local time offset of the environment that the client is running within.
     ManagedConfigResponse:
       type: object
       properties:
-        service_id:
+        serviceId:
           type: string
-        service_key:
+        serviceKey:
           type: string
-        service_id_expiry:
+        serviceIdExpiry:
           type: string
           format: date-time
-        group_name:
+        groupName:
           type: string
-        region_name:
+        regionName:
           type: string
     TimeGroup:
       type: object
