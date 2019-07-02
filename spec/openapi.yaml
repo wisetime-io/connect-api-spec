@@ -618,10 +618,12 @@ components:
           enum:
             - SUCCESS
             - FAILURE
+            - RETRIABLE_FAILURE
           description: >
             This field describes the status of the posted time group.
             On SUCCESS the time group will be marked as successfully posted.
             On FAILURE the time group will be marked as failed and the attached message will displayed to the user.
+            On RETRIABLE_FAILURE the time group will be marked as temporary failed and scheduled for retry. The attached message might be displayed to the user.
         message:
           type: string
           description: Reason for the failure, will be displayed to the user.
