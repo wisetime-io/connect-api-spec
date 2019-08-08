@@ -390,7 +390,9 @@ components:
           description: "Tag name to create. If a tag by this name already exists, the tag will be updated."
           type: string
         description:
-          description: "Displayed in the GUI and search functions."
+          description: >
+            Displayed in the GUI and search functions.
+            An empty (or null) description will be ignored, the description will remain with the previous value instead of replacing it.
           type: string
         excludeTagNameKeyword:
           description: >
