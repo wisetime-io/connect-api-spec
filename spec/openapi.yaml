@@ -490,7 +490,7 @@ components:
           type: string
           format: date-time
           description: The date which the current credentials will expire.
-        serviceSession:
+        serviceSessionToken:
           type: string
           description: The token that the service must pass to the API to use the security credentials.
         groupName:
