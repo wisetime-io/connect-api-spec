@@ -482,14 +482,22 @@ components:
       properties:
         serviceId:
           type: string
+          description: Service ID that identifies the security credentials.
         serviceKey:
           type: string
+          description: Secret key for the security credentials.
         serviceIdExpiry:
           type: string
           format: date-time
+          description: The date which the current credentials will expire.
+        serviceSession:
+          type: string
+          description: The token that the service must pass to the API to use the security credentials.
         groupName:
           type: string
+          description: The name of the group for logging.
         regionName:
+          description: Geographic area for the logging.
           type: string
     TimeGroup:
       type: object
