@@ -179,6 +179,8 @@ paths:
           description: Invalid request. Limit cannot be smaller than 1.
         '401':
           description: A valid API key is required to access this resource.
+        '409':
+          description: This team has a registered posted time webhook. Switching to use fetch client is required.
         '500':
           description: An unexpected error occured.
 
@@ -235,6 +237,8 @@ paths:
           description: A valid API key is required to access this resource.
         '404':
           description: Fetch client not found.
+        '409':
+          description: This team has a registered posted time webhook. Switching to use fetch client is required.
         '500':
           description: An unexpected error occured.
 
@@ -262,6 +266,8 @@ paths:
           description: A valid API key is required to access this resource.
         '404':
           description: The time group/fetch client id pair was not found.
+        '409':
+          description: This team has a registered posted time webhook. Switching to use fetch client is required.
         '500':
           description: An unexpected error occured.
 
