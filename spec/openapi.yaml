@@ -507,6 +507,13 @@ components:
         regionName:
           description: Geographic area for the logging.
           type: string
+        connectorConfiguration:
+          type: object
+          description: A dictionary of connector configuration properties.
+          additionalProperties:
+            type: string
+          example:
+            ADD_SUMMARY_TO_NARRATIVE: true
     TimeGroup:
       type: object
       properties:
