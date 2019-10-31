@@ -333,7 +333,7 @@ paths:
   /postedtime/unsubscribe:
     post:
       operationId: delete-webhook
-      summary: Delete existing webhook by id, unsubscribing your application from posted time notifications.
+      summary: Delete existing webhook for given connector (specified by api key), unsubscribing your application from posted time notifications.
       description: WiseTime will stop calling your webhook when users post time to your team.
       tags:
         - Posted Time
@@ -353,7 +353,7 @@ paths:
         '401':
           description: A valid API key is required to access this resource.
         '404':
-          description: Webhook not found.
+          description: No Webhook found for provided api key.
         '500':
           description: An unexpected error occured.
 
@@ -618,9 +618,6 @@ components:
         - callbackUrl
     SubscribeResult:
       type: object
-      properties:
-        webhookId:
-          type: string
     RegisterFetchClientRequest:
       type: object
     RegisterFetchClientResult:
@@ -693,10 +690,6 @@ components:
             Time logs can either come from the desktop client (WT_DESKTOP) or be created manually by the user (USER_MANUAL_TIME).
     UnsubscribeRequest:
       type: object
-      properties:
-        webhookId:
-          type: string
-          description: The ID of the webhook to be deleted.
     UnsubscribeResult:
       type: object
     UnregisterFetchClientRequest:
