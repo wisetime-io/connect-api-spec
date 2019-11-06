@@ -466,10 +466,10 @@ components:
       type: object
       properties:
         index:
-          description: index of item in the request to which this error corresponds to
+          description: Index of item in the request to which this error corresponds to.
           type: integer
         errorDescrition:
-          description: string with error details
+          description: String with error details.
           type: string
     UpsertTagResponse:
       type: object
