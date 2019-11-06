@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: WiseTime Connect API
-  version: "1.2.1"
+  version: "1.2.2"
   description: >-
     Use the WiseTime Connect API to build connectors to your application.
   contact:
@@ -56,7 +56,35 @@ paths:
               schema:
                 $ref: '#/components/schemas/UpsertTagResponse'
         '400':
-          description: Invalid request. Tag name is required.
+          description: Invalid request. Tag name is missing or path is invalid.
+        '401':
+          description: A valid API key is required to access this resource.
+        '402':
+          description: Number of tags plan limit exceeded.
+        '500':
+          description: An unexpected error occured.
+
+  /tag/batch:
+    post:
+      operationId: batch-tag-upsert
+      summary: Create new tags, or update existing in batch (up to 2000 items at once)
+      tags:
+        - Tags
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchUpsertTagRequest'
+      responses:
+        '200':
+          description: Tag successfully created or updated.
+        '400':
+          description: Invalid request. Tag name is missing or path is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchUpsertTagResponse'
         '401':
           description: A valid API key is required to access this resource.
         '402':
@@ -420,6 +448,29 @@ components:
           type: array
           items:
             type: string
+    BatchUpsertTagRequest:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/UpsertTagRequest'
+    BatchUpsertTagResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+    ErrorItem:
+      type: object
+      properties:
+        index:
+          description: index of item in the request to which this error corresponds to
+          type: integer
+        errorDescrition:
+          description: string with error details
+          type: string
     UpsertTagResponse:
       type: object
     DeleteTagRequest:
