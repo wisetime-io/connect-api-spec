@@ -179,7 +179,7 @@ paths:
   /postedtime:
     get:
       operationId: fetch-posted-time
-      summary: Returns posted time for the team.
+      summary: Returns posted time with pending status.
       description: >
         This is a long polling call (an alternative to using the webhook mechanism).
         The connection will be held open for a maximum of 60 seconds or until there is a new posted time event.
@@ -209,6 +209,46 @@ paths:
           description: A valid API key is required to access this resource.
         '409':
           description: This team has a registered posted time webhook. Switching to use fetch client is required.
+        '500':
+          description: An unexpected error occured.
+
+  /postedtime/list:
+    get:
+      operationId: list-posted-time
+      summary: Returns list of posted time with pending or success status.
+      description: >
+        Returns all time groups for team in descending order of submission time starting from now. This is not a long polling endpoint.
+      tags:
+        - Posted Time List
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          required: false
+          description: Maximum number of items in return. Should be from 1 to 500. Default is 100.
+        - in: query
+          name: submittedBefore
+          schema:
+            type: integer
+          required: false
+          description: >
+          Filter response to return only time groups submitted before requested timestamp.
+          If empty - returns latest time groups. Note that the submisisonTime may be the same for multiple time groups as
+          users may submit more than 1 time group as a single operation. Measured in milliseconds since the Epoch.
+      responses:
+        '200':
+          description: List of time groups.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TimeGroup'
+        '400':
+          description: Invalid request.
+        '401':
+          description: A valid API key is required to access this resource.
         '500':
           description: An unexpected error occured.
 
@@ -597,6 +637,14 @@ components:
           description: >
             The user may request that the time row activity information be ignored by the web hook receiver.
             In the usual case, the default narrative type is `NARRATIVE_AND_TIME_ROW_ACTIVITY_DESCRIPTIONS`.
+        status:
+          type: string
+          enum:
+            - PENDING
+            - SUCCESS
+        submissionTime:
+          type: long
+          description: Time when the user posted the time group. Measured in milliseconds since the Epoch.
         tags:
           type: array
           items:
@@ -720,6 +768,7 @@ components:
           description: The duration of the activity, in seconds.
         submittedDate:
           type: long
+          deprecated: true
           description: Time when the activity was submitted by the user in UTC, in the format yyyyMMddHHmmSSsss.
         modifier:
           type: string
