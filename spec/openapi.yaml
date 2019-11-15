@@ -227,7 +227,7 @@ paths:
           schema:
             type: integer
           required: false
-          description: Maximum number of items in return. Should be from 1 to 500. Default is 100.
+          description: Maximum number of items to return. Should be between 1 and 500. Default is 100.
         - in: query
           name: submittedBefore
           schema:
