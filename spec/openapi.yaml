@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: WiseTime Connect API
-  version: "1.2.2"
+  version: "1.2.3"
   description: >-
     Use the WiseTime Connect API to build connectors to your application.
   contact:
@@ -233,9 +233,9 @@ paths:
             type: integer
           required: false
           description: >
-          Filter response to return only time groups submitted before requested timestamp.
-          If empty - returns latest time groups. Note that the submisisonTime may be the same for multiple time groups as
-          users may submit more than 1 time group as a single operation. Measured in milliseconds since the Epoch.
+            Filter response to return only time groups submitted before requested timestamp.
+            If empty - returns latest time groups. Note that the submisisonTime may be the same for multiple time groups as
+            users may submit more than 1 time group as a single operation. Measured in milliseconds since the Epoch.
       responses:
         '200':
           description: List of time groups.
