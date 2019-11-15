@@ -181,6 +181,7 @@ paths:
       operationId: fetch-posted-time
       summary: Returns posted time with pending status.
       description: >
+        Use this endpoint to fetch posted time for processing.
         This is a long polling call (an alternative to using the webhook mechanism).
         The connection will be held open for a maximum of 60 seconds or until there is a new posted time event.
         When calling this method without first calling the /postedtime/registerfetchclient endpoint, recording posted time for fetching
