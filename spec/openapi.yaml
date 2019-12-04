@@ -489,6 +489,11 @@ components:
           type: array
           items:
             type: string
+        url:
+          description: >
+            If a URL is provided, the tag will be a clickable link in the WiseTime console.
+            Clicking on the tag will open the URL.
+          type: string
     BatchUpsertTagRequest:
       type: object
       properties:
