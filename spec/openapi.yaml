@@ -752,6 +752,9 @@ components:
         message:
           type: string
           description: Reason for the failure, will be displayed to the user.
+        externalId:
+          type: string
+          description: Reference in external system to time group.
     TimeRow:
       type: object
       properties:
