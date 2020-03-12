@@ -120,6 +120,62 @@ paths:
         '500':
           description: An unexpected error occured.
 
+  /tag/properties:
+    post:
+      operationId: add-set-tag-properties
+      summary: Add one or more tag properties to an existing tag.
+      description: >
+        This endpoint ensures that there will be **no** duplicate or deletion of any existing tag specific properties within WiseTime. Use the endpoint `/tag/properties/delete` for the deletion of tag properties.
+      tags:
+        - Tags
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddTagPropertySetRequest'
+      responses:
+        '200':
+          description: Tag properties successfully added.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddTagPropertySetResponse'
+        '400':
+          description: Invalid request. Tag name and additional properties are required.
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
+  /tag/properties/delete:
+    post:
+      operationId: delete-tag-properties
+      summary: Delete an existing property from a tag
+      tags:
+        - Tags
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteTagPropertySetRequest'
+      responses:
+        '200':
+          description: Tag property successfully deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteTagPropertySetResponse'
+        '400':
+          description: Invalid request. Tag name and property are required.
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: Tag or property not found.
+        '500':
+          description: An unexpected error occured.
+
   /tag/keyword:
     post:
       operationId: tag-keywords-add
@@ -458,6 +514,40 @@ components:
       in: header
       name: x-api-key
   schemas:
+    AddTagPropertySetRequest:
+      type: object
+      properties:
+        tagName:
+          type: string
+          description: The name of the tag that will be contain the tag property.
+        tagProperties:
+          type: object
+          description: A set of tag properties.
+          additionalProperties:
+            type: string
+          example:
+            PRIMARY_GROUP: billable/non-billable
+      required:
+        - tagName
+        - tagProperties
+    AddTagPropertySetResponse:
+      type: object
+    DeleteTagPropertySetRequest:
+      type: object
+      properties:
+        tagName:
+          type: string
+          description: The tag from which to delete the tag property set.
+        propertyNames:
+          description: The tag property to delete.
+          type: array
+          items:
+            type: string
+      required:
+        - tagName
+        - tagProperties
+    DeleteTagPropertySetResponse:
+      type: object
     UpsertTagRequest:
       type: object
       properties:
@@ -482,6 +572,20 @@ components:
             For example /myteam/inprotech/
             Use / to create tag in root.
           type: string
+        tagManagedBy:
+          description: >
+            Set to `INTERNAL` when a user has created a tag via the WiseTime console, `UNKNOWN` for legacy tags where managed by cannot be determined. If blank or missing, the value will be defaulted to the connector's name.
+          type: string
+          enum:
+            - INTERNAL
+            - UNKNOWN
+        tagProperties:
+          description: >
+            Add one or more tag properties to the tag. The default behaviour ensures that there will be **no** duplicate or deletion of any existing tag specific properties within WiseTime.
+            Use the endpoint `/tag/properties/delete` for the deletion of tag properties.
+          type: object
+          additionalProperties:
+            type: string
         additionalKeywords:
           description: >
             A tag is applied to a time row if one of its keywords matches text in the time row activity description.
