@@ -574,11 +574,8 @@ components:
           type: string
         tagManagedBy:
           description: >
-            Set to `INTERNAL` when a user has created a tag via the WiseTime console, `UNKNOWN` for legacy tags where managed by cannot be determined. If blank or missing, the value will be defaulted to the connector's name.
+            If blank or missing, the value will be defaulted to the connector's name.
           type: string
-          enum:
-            - INTERNAL
-            - UNKNOWN
         tagProperties:
           description: >
             Add one or more tag properties to the tag. The default behaviour ensures that there will be **no** duplicate or deletion of any existing tag specific properties within WiseTime.
