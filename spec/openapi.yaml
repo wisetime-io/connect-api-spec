@@ -133,14 +133,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AddTagPropertySetRequest'
+              $ref: '#/components/schemas/AddSetTagPropertiesRequest'
       responses:
         '200':
           description: Tag properties successfully added.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AddTagPropertySetResponse'
+                $ref: '#/components/schemas/AddSetTagPropertiesResponse'
         '400':
           description: Invalid request. Tag name and additional properties are required.
         '401':
@@ -159,14 +159,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeleteTagPropertySetRequest'
+              $ref: '#/components/schemas/DeleteTagPropertiesRequest'
       responses:
         '200':
           description: Tag property successfully deleted.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DeleteTagPropertySetResponse'
+                $ref: '#/components/schemas/DeleteTagPropertiesResponse'
         '400':
           description: Invalid request. Tag name and property are required.
         '401':
@@ -514,7 +514,7 @@ components:
       in: header
       name: x-api-key
   schemas:
-    AddTagPropertySetRequest:
+    AddSetTagPropertiesRequest:
       type: object
       properties:
         tagName:
@@ -530,9 +530,9 @@ components:
       required:
         - tagName
         - tagProperties
-    AddTagPropertySetResponse:
+    AddSetTagPropertiesResponse:
       type: object
-    DeleteTagPropertySetRequest:
+    DeleteTagPropertiesRequest:
       type: object
       properties:
         tagName:
@@ -546,7 +546,7 @@ components:
       required:
         - tagName
         - tagProperties
-    DeleteTagPropertySetResponse:
+    DeleteTagPropertiesResponse:
       type: object
     UpsertTagRequest:
       type: object
