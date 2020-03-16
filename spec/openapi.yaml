@@ -574,6 +574,7 @@ components:
           type: string
         tagManagedBy:
           description: >
+            Identifier of the resource that manages this tag.
             If blank or missing, the value will be defaulted to the connector's name.
           type: string
         tagProperties:
