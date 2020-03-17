@@ -120,12 +120,13 @@ paths:
         '500':
           description: An unexpected error occured.
 
-  /tag/properties:
+  /tag/metadata:
     post:
-      operationId: add-set-tag-properties
-      summary: Add one or more tag properties to an existing tag.
+      operationId: add-set-tag-metadata
+      summary: Add metadata to an existing tag.
       description: >
-        This endpoint ensures that there will be **no** duplicate or deletion of any existing tag specific properties within WiseTime. Use the endpoint `/tag/properties/delete` for the deletion of tag properties.
+        You can assign metadata to a tag.  This information is provided as a name-value (key-value) pair.  In the case of providing any name-value where the name is already assigned as metadata to the tag, the value will be updated with value supplied.
+        To delete/remove a name-value pair stored as metadata on a tag, you must use the `delete-tag-metadata` operation.
       tags:
         - Tags
       requestBody:
@@ -133,25 +134,27 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AddSetTagPropertiesRequest'
+              $ref: '#/components/schemas/AddSetTagMetadataRequest'
       responses:
         '200':
-          description: Tag properties successfully added.
+          description: Tag metadata successfully added.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AddSetTagPropertiesResponse'
+                $ref: '#/components/schemas/AddSetTagMetadataResponse'
         '400':
-          description: Invalid request. Tag name and additional properties are required.
+          description: Invalid request. Tag name and metadata is required.
         '401':
           description: A valid API key is required to access this resource.
         '500':
           description: An unexpected error occured.
 
-  /tag/properties/delete:
+  /tag/metadata/delete:
     post:
-      operationId: delete-tag-properties
-      summary: Delete an existing property from a tag
+      operationId: delete-tag-metadata
+      summary: Permanently deletes the specified metadata from an existing tag.
+      description: >
+        Provide the metadata names that you want to delete.
       tags:
         - Tags
       requestBody:
@@ -159,20 +162,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeleteTagPropertiesRequest'
+              $ref: '#/components/schemas/DeleteTagMetadataRequest'
       responses:
         '200':
-          description: Tag property successfully deleted.
+          description: Tag metadata successfully deleted.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DeleteTagPropertiesResponse'
+                $ref: '#/components/schemas/DeleteTagMetadataResponse'
         '400':
-          description: Invalid request. Tag name and property are required.
+          description: Invalid request. Tag name and metadata are required.
         '401':
           description: A valid API key is required to access this resource.
         '404':
-          description: Tag or property not found.
+          description: Tag or metaadata not found.
         '500':
           description: An unexpected error occured.
 
@@ -514,39 +517,43 @@ components:
       in: header
       name: x-api-key
   schemas:
-    AddSetTagPropertiesRequest:
+    TagMetadataSet:
+      type: object
+      description: >
+        You can assign metadata to a tag.  You provide this information as a name-value (key-value) pair.  In the case of providing any name-value where the name is already assigned as metadata to the tag, the value will be updated with value supplied. All tag metadata names will be converted/stored in lowercase.
+        To delete/remove a name-value pair stored as metadata on a tag, you must use the `delete-tag-metadata` operation.
+      additionalProperties:
+        type: string
+      example:
+        primary_group: billable
+    AddSetTagMetadataRequest:
       type: object
       properties:
         tagName:
           type: string
-          description: The name of the tag that will be contain the tag property.
-        tagProperties:
-          type: object
-          description: A set of tag properties.
-          additionalProperties:
-            type: string
-          example:
-            PRIMARY_GROUP: billable/non-billable
+          description: The name of the tag that will be contain the tag metadata.
+        metadata:
+          $ref: '#/components/schemas/TagMetadataSet'
       required:
         - tagName
-        - tagProperties
-    AddSetTagPropertiesResponse:
+        - metadata
+    AddSetTagMetadataResponse:
       type: object
-    DeleteTagPropertiesRequest:
+    DeleteTagMetadataRequest:
       type: object
       properties:
         tagName:
           type: string
-          description: The tag from which to delete the tag property set.
-        propertyNames:
-          description: The list of tag property names to delete.
+          description: The tag from which to delete the tag metadata.
+        metadataNames:
+          description: The name(s) of the tag metadata to delete.
           type: array
           items:
             type: string
       required:
         - tagName
-        - tagProperties
-    DeleteTagPropertiesResponse:
+        - metadataNames
+    DeleteTagMetadataResponse:
       type: object
     UpsertTagRequest:
       type: object
@@ -572,18 +579,14 @@ components:
             For example /myteam/inprotech/
             Use / to create tag in root.
           type: string
-        tagManagedBy:
+        managedBy:
           description: >
             Identifier of the resource that manages this tag.
             If blank or missing, the value will be defaulted to the connector's name.
           type: string
-        tagProperties:
+        metadataSet:
           description: >
-            You can assign metadata to a tag.  You provide this optional information as a name-value (key-value) pair.  In the case of providing any name-value where the name is already assigned as metadata to the tag, the value will be updated with value supplied.
-            To delete/remove a name-value pair stored as metadata on a tag, you must use the `delete-tag-properties` operation.
-          type: object
-          additionalProperties:
-            type: string
+          $ref: '#/components/schemas/TagMetadataSet'
         additionalKeywords:
           description: >
             A tag is applied to a time row if one of its keywords matches text in the time row activity description.
