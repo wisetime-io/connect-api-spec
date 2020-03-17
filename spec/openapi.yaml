@@ -579,7 +579,7 @@ components:
           type: string
         tagProperties:
           description: >
-            Add one or more tag properties to the tag. The default behaviour ensures that there will be **no** duplicate or deletion of any existing tag specific properties within WiseTime.
+            You can assign metadata to a tag.  You provide this optional information as a name-value (key-value) pair.  In the case of providing any name-value where the name is already assigned as metadata to the tag, the value will be updated with value supplied.
             Use the endpoint `/tag/properties/delete` for the deletion of tag properties.
           type: object
           additionalProperties:
