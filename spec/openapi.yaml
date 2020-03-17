@@ -134,14 +134,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateTagMetadataRequest'
+              $ref: '#/components/schemas/TagMetadataUpdateRequest'
       responses:
         '200':
           description: Tag metadata successfully updated.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UpdateTagMetadataResponse'
+                $ref: '#/components/schemas/TagMetadataUpdateResponse'
         '400':
           description: Invalid request. Tag name and metadata is required.
         '401':
@@ -162,14 +162,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeleteTagMetadataRequest'
+              $ref: '#/components/schemas/TagMetadataDeleteRequest'
       responses:
         '200':
           description: Tag metadata successfully deleted.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DeleteTagMetadataResponse'
+                $ref: '#/components/schemas/TagMetadataDeleteResponse'
         '400':
           description: Invalid request. Tag name and metadata are required.
         '401':
@@ -526,7 +526,7 @@ components:
         type: string
       example:
         primary_group: billable
-    UpdateTagMetadataRequest:
+    TagMetadataUpdateRequest:
       type: object
       properties:
         tagName:
@@ -537,9 +537,9 @@ components:
       required:
         - tagName
         - metadata
-    UpdateTagMetadataResponse:
+    TagMetadataUpdateResponse:
       type: object
-    DeleteTagMetadataRequest:
+    TagMetadataDeleteRequest:
       type: object
       properties:
         tagName:
@@ -553,7 +553,7 @@ components:
       required:
         - tagName
         - metadataNames
-    DeleteTagMetadataResponse:
+    TagMetadataDeleteResponse:
       type: object
     UpsertTagRequest:
       type: object
