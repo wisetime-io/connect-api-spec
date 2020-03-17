@@ -122,8 +122,8 @@ paths:
 
   /tag/metadata:
     post:
-      operationId: add-set-tag-metadata
-      summary: Add metadata to an existing tag.
+      operationId: assign-tag-metadata
+      summary: Assign metadata to an existing tag.
       description: >
         You can assign metadata to a tag.  This information is provided as a name-value (key-value) pair.  In the case of providing any name-value where the name is already assigned as metadata to the tag, the value will be updated with value supplied.
         To delete/remove a name-value pair stored as metadata on a tag, you must use the `delete-tag-metadata` operation.
@@ -134,14 +134,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AddSetTagMetadataRequest'
+              $ref: '#/components/schemas/UpdateTagMetadataRequest'
       responses:
         '200':
           description: Tag metadata successfully added.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AddSetTagMetadataResponse'
+                $ref: '#/components/schemas/UpdateTagMetadataResponse'
         '400':
           description: Invalid request. Tag name and metadata is required.
         '401':
@@ -526,7 +526,7 @@ components:
         type: string
       example:
         primary_group: billable
-    AddSetTagMetadataRequest:
+    UpdateTagMetadataRequest:
       type: object
       properties:
         tagName:
@@ -537,7 +537,7 @@ components:
       required:
         - tagName
         - metadata
-    AddSetTagMetadataResponse:
+    UpdateTagMetadataResponse:
       type: object
     DeleteTagMetadataRequest:
       type: object
