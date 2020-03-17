@@ -539,7 +539,7 @@ components:
           type: string
           description: The tag from which to delete the tag property set.
         propertyNames:
-          description: The tag property to delete.
+          description: The list of tag property names to delete.
           type: array
           items:
             type: string
