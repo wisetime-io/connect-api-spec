@@ -580,7 +580,7 @@ components:
         tagProperties:
           description: >
             You can assign metadata to a tag.  You provide this optional information as a name-value (key-value) pair.  In the case of providing any name-value where the name is already assigned as metadata to the tag, the value will be updated with value supplied.
-            Use the endpoint `/tag/properties/delete` for the deletion of tag properties.
+            To delete/remove a name-value pair stored as metadata on a tag, you must use the `delete-tag-properties` operation.
           type: object
           additionalProperties:
             type: string
