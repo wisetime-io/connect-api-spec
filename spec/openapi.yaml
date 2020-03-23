@@ -141,12 +141,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TagMetadataDeleteResponse'
+        '204':
+          description: >
+            (No Content) when there is no need to return any content, where metadata was not found or if it was already deleted.
         '400':
           description: Invalid request. Tag name and metadata are required.
         '401':
           description: A valid API key is required to access this resource.
         '404':
-          description: Tag or metaadata not found.
+          description: Metadata cannot be deleted since the requested tag does not exist.
         '500':
           description: An unexpected error occured.
 
