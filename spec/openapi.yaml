@@ -143,7 +143,7 @@ paths:
                 $ref: '#/components/schemas/TagMetadataDeleteResponse'
         '204':
           description: >
-            (No Content) when there is no need to return any content, where metadata was not found or if it was already deleted.
+            (No Content) metadata was not found or already deleted.
         '400':
           description: Invalid request. Tag name and metadata are required.
         '401':
