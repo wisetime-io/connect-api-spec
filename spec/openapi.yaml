@@ -136,7 +136,7 @@ paths:
               $ref: '#/components/schemas/TagMetadataDeleteRequest'
       responses:
         '200':
-          description: Fullfilled when metadata was deleted, not found or already deleted.
+          description: Fulfilled when metadata was deleted, not found or already deleted.
           content:
             application/json:
               schema:
