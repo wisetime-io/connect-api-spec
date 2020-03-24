@@ -136,14 +136,11 @@ paths:
               $ref: '#/components/schemas/TagMetadataDeleteRequest'
       responses:
         '200':
-          description: Tag metadata successfully deleted.
+          description: Fullfilled when metadata was deleted, not found or already deleted.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TagMetadataDeleteResponse'
-        '204':
-          description: >
-            (No Content) metadata was not found or already deleted.
         '400':
           description: Invalid request. Tag name and metadata are required.
         '401':
