@@ -666,14 +666,13 @@ components:
         originatingUser:
           $ref: '#/components/schemas/User'
         durationSplitStrategy:
+          deprecated: true
           type: string
           enum:
             - DIVIDE_BETWEEN_TAGS
             - WHOLE_DURATION_TO_EACH_TAG
           description: >
-            Only relevant when the group has more than one tag.  This instructs the endpoint whether time should be divided between tags (usual behaviour),
-            or if `WHOLE_DURATION_TO_EACH_TAG` is set, the webhook receiver is asked to post the full/undivided time to each of the tags
-            listed in the tags array.
+            This field should be ignored, there can be at most one tag per group.
     Tag:
       type: object
       properties:
