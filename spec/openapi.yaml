@@ -655,7 +655,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Tag'
-          description: An array of tags that were assigned to the time group. An empty array will be sent if there were no assigned tags.
+          description: >
+            An array of tags that were assigned to the time group. An empty array will be sent if there were no assigned tags.
+            There will be not more than one tag in this array. This field is an array for backwards API compatibility, it will
+            be deprecated in the future and substituted by a unary field.
         timeRows:
           type: array
           items:
