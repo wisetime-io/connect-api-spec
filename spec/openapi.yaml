@@ -120,6 +120,36 @@ paths:
         '500':
           description: An unexpected error occured.
 
+  /tag/metadata/delete:
+    post:
+      operationId: tag-metadata-delete
+      summary: Permanently deletes the specified metadata from an existing tag.
+      description: >
+        Provide the metadata names that you want to delete.
+      tags:
+        - Tags
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagMetadataDeleteRequest'
+      responses:
+        '200':
+          description: Fulfilled when metadata was deleted, not found or already deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagMetadataDeleteResponse'
+        '400':
+          description: Invalid request. Tag name and metadata are required.
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: Metadata cannot be deleted since the requested tag does not exist.
+        '500':
+          description: An unexpected error occured.
+
   /tag/keyword:
     post:
       operationId: tag-keywords-add
@@ -458,6 +488,31 @@ components:
       in: header
       name: x-api-key
   schemas:
+    TagMetadataSet:
+      type: object
+      description: >
+        You can assign metadata to a tag.  You provide this information as a name-value (key-value) pair.  In the case of providing any name-value where the name is already assigned as metadata to the tag, the value will be updated with value supplied. All tag metadata names will be converted/stored in lowercase.
+        To delete/remove a name-value pair stored as metadata on a tag, you must use the `delete-tag-metadata` operation.
+      additionalProperties:
+        type: string
+      example:
+        primary_group: billable
+    TagMetadataDeleteRequest:
+      type: object
+      properties:
+        tagName:
+          type: string
+          description: The tag from which to delete the tag metadata.
+        metadataNames:
+          description: The name(s) of the tag metadata to delete.
+          type: array
+          items:
+            type: string
+      required:
+        - tagName
+        - metadataNames
+    TagMetadataDeleteResponse:
+      type: object
     UpsertTagRequest:
       type: object
       properties:
@@ -482,6 +537,13 @@ components:
             For example /myteam/inprotech/
             Use / to create tag in root.
           type: string
+        managedBy:
+          description: >
+            Identifier of the resource that manages this tag.
+            If blank or missing, the value will be defaulted to the connector's name.
+          type: string
+        metadata:
+          $ref: '#/components/schemas/TagMetadataSet'
         additionalKeywords:
           description: >
             A tag is applied to a time row if one of its keywords matches text in the time row activity description.
