@@ -1,0 +1,15 @@
+kind: pipeline
+name: build
+
+steps:
+
+  - name: validate-openapi
+    image: openapitools/openapi-generator-cli
+    commands:
+      - echo "calling openapi-generator-cli to validate spec/openapi.yaml"
+      - docker-entrypoint.sh validate -i spec/openapi.yaml --recommend
+
+trigger:
+  event:
+    - push
+    - tag

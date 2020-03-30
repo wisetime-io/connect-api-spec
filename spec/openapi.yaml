@@ -480,11 +480,11 @@ paths:
         '500':
           description: An unexpected error occured.
 
-  /healthcheckfailure:
+  /healthcheck/failure/notify:
     post:
-      operationId: health-check-failure
+      operationId: health-check-failure-notify
       summary: >
-        Report non-transient health check error.
+        Report non-transient health check failure.
         For unknown error codes the provided error message will be shown to users on time posting.
         For known error codes connect-api-server will determine the appropriate message.
       tags:
@@ -494,38 +494,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/HealthCheckFailureRequest'
+              $ref: '#/components/schemas/HealthCheckFailureNotify'
       responses:
-        '200':
+        '204':
           description: Error state has been recorded
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HealthCheckFailureResponse'
         '401':
           description: A valid API key is required to access this resource.
         '500':
           description: An unexpected error occured.
 
-  /clearhealthcheckfailure:
+  /healthcheck/failure/rescind:
     post:
-      operationId: clear-health-check-failure
-      summary: Clear previously reported health check failure.
+      operationId: health-check-failure-rescind
+      summary: Rescind (clear) a previously reported health check failure.
       tags:
         - Connector Management
       requestBody:
-        required: true
+        required: false
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ClearHealthCheckFailureRequest'
+              $ref: '#/components/schemas/HealthCheckFailureRescind'
       responses:
-        '200':
-          description: Error state has been cleared
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ClearHealthCheckFailureResponse'
+        '204':
+          description: Error state has been rescinded/cleared
         '401':
           description: A valid API key is required to access this resource.
         '500':
@@ -565,6 +557,8 @@ components:
         - tagName
         - metadataNames
     TagMetadataDeleteResponse:
+      type: object
+    HealthCheckFailureRescind:
       type: object
     UpsertTagRequest:
       type: object
@@ -691,7 +685,7 @@ components:
           type: string
           description: The WiseTime connector library version that the connector is using.
         clientTimestamp:
-          type: number
+          type: integer
           format: int64
           description: The current system timestamp from epoch of the client environment.
         clientTimeZoneOffset:
@@ -726,24 +720,26 @@ components:
             type: string
           example:
             ADD_SUMMARY_TO_NARRATIVE: true
-    HealthCheckFailureRequest:
+    HealthCheckFailureNotify:
       type: object
       properties:
-        errorCode:
+        errorType:
           type: string
           description: >
-            Code of the occurred error.
+            Type of non-transient health check failure that occurred.
+          enum:
+           - UNKNOWN
+           - TARGET_UNREACHABLE
+           - TARGET_AUTH_FAILURE
+        errorKey:
+          type: string
+          description: >
+            Key representing what error occurred.
             If set to "UNKNOWN" postErrorMessage will be displayed to users trying to post time while the
             connector is in the failed state.
-        postErrorMessage:
+        userErrorMessage:
           type: string
-          description: Error message shown to the users trying to post time while this error lasts.
-    HealthCheckFailureResponse:
-      type: object
-    ClearHealthCheckFailureRequest:
-      type: object
-    ClearHealthCheckFailureResponse:
-      type: object
+          description: Error message shown to team members when trying to post time (until the failure is rescinded / cleared).
     TimeGroup:
       type: object
       properties:
@@ -782,7 +778,8 @@ components:
             - PENDING
             - SUCCESS
         submissionTime:
-          type: long
+          type: integer
+          format: int64
           description: Time when the user posted the time group. Measured in milliseconds since the Epoch.
         tags:
           type: array
@@ -911,7 +908,8 @@ components:
           type: integer
           description: The duration of the activity, in seconds.
         submittedDate:
-          type: long
+          type: integer
+          format: int64
           deprecated: true
           description: Time when the activity was submitted by the user in UTC, in the format yyyyMMddHHmmSSsss.
         modifier:
