@@ -491,12 +491,14 @@ components:
     TagMetadataSet:
       type: object
       description: >
-        You can assign metadata to a tag.  You provide this information as a name-value (key-value) pair, all metadata names are case-sensitive.  In the case of providing any name-value where the name is already assigned as metadata to the tag, the value will be updated with value supplied.
+        You can assign metadata to a tag.  You provide this information as a name-value (key-value) pair.
+        The metadata names are case sensitive and will be displayed in reports, it is recommended the names be descriptive to clarify its meaning.
+        In the case of providing any name-value where the name is already assigned as metadata to the tag, the value will be updated with value supplied.
         To delete/remove a name-value pair stored as metadata on a tag, you must use the `tag-metadata-delete` operation.
       additionalProperties:
         type: string
       example:
-        billing_group: billable
+        Billing Group: billable
     TagMetadataDeleteRequest:
       type: object
       properties:
