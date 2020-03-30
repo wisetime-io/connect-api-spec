@@ -731,15 +731,12 @@ components:
            - UNKNOWN
            - TARGET_UNREACHABLE
            - TARGET_AUTH_FAILURE
-        errorKey:
-          type: string
-          description: >
-            Key representing what error occurred.
-            If set to "UNKNOWN" postErrorMessage will be displayed to users trying to post time while the
-            connector is in the failed state.
+           - TARGET_SUBSCRIPTION_FAILURE
         userErrorMessage:
           type: string
-          description: Error message shown to team members when trying to post time (until the failure is rescinded / cleared).
+          description: >
+            Error message shown to team members when trying to post time (until the failure is rescinded / cleared).
+            Optional, will overwrite the default error message of the provided errorType.
     TimeGroup:
       type: object
       properties:
