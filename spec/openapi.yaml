@@ -480,6 +480,57 @@ paths:
         '500':
           description: An unexpected error occured.
 
+  /healthcheckfailure:
+    post:
+      operationId: health-check-failure
+      summary: >
+        Report non-transient health check error.
+        For unknown error codes the provided error message will be shown to users on time posting.
+        For known error codes connect-api-server will determine the appropriate message.
+      tags:
+        - Connector Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HealthCheckFailureRequest'
+      responses:
+        '200':
+          description: Error state has been recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckFailureResponse'
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
+  /clearhealthcheckfailure:
+    post:
+      operationId: clear-health-check-failure
+      summary: Clear previously reported health check failure.
+      tags:
+        - Connector Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClearHealthCheckFailureRequest'
+      responses:
+        '200':
+          description: Error state has been cleared
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClearHealthCheckFailureResponse'
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
 components:
   securitySchemes:
     ConnectApiKeyAuth:
@@ -675,6 +726,24 @@ components:
             type: string
           example:
             ADD_SUMMARY_TO_NARRATIVE: true
+    HealthCheckFailureRequest:
+      type: object
+      properties:
+        errorCode:
+          type: string
+          description: >
+            Code of the occurred error.
+            If set to "UNKNOWN" postErrorMessage will be displayed to users trying to post time while the
+            connector is in the failed state.
+        postErrorMessage:
+          type: string
+          description: Error message shown to the users trying to post time while this error lasts.
+    HealthCheckFailureResponse:
+      type: object
+    ClearHealthCheckFailureRequest:
+      type: object
+    ClearHealthCheckFailureResponse:
+      type: object
     TimeGroup:
       type: object
       properties:
