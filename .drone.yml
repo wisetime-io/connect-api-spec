@@ -16,7 +16,7 @@ steps:
       GITHUB_SSH_KEY_B64:
         from_secret: github-ssh-key-b64
     commands:
-      - ./mirror.sh
+      - bin/mirror.sh
     when:
       ref:
         - refs/heads/master
