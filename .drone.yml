@@ -1,8 +1,6 @@
 ---
 kind: pipeline
 name: mirror-to-github
-depends_on:
-  - test-and-publish
 
 steps:
   - name: validate
