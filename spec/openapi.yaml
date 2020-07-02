@@ -480,6 +480,49 @@ paths:
         '500':
           description: An unexpected error occured.
 
+  /healthcheck/failure/notify:
+    post:
+      operationId: health-check-failure-notify
+      summary: >
+        Report non-transient health check failure.
+        For unknown error codes the provided error message will be shown to users on time posting.
+        For known error codes connect-api-server will determine the appropriate message.
+      tags:
+        - Connector Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HealthCheckFailureNotify'
+      responses:
+        '204':
+          description: Error state has been recorded
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
+  /healthcheck/failure/rescind:
+    post:
+      operationId: health-check-failure-rescind
+      summary: Rescind (clear) a previously reported health check failure.
+      tags:
+        - Connector Management
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HealthCheckFailureRescind'
+      responses:
+        '204':
+          description: Error state has been rescinded/cleared
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
 components:
   securitySchemes:
     ConnectApiKeyAuth:
@@ -514,6 +557,8 @@ components:
         - tagName
         - metadataNames
     TagMetadataDeleteResponse:
+      type: object
+    HealthCheckFailureRescind:
       type: object
     UpsertTagRequest:
       type: object
@@ -640,7 +685,7 @@ components:
           type: string
           description: The WiseTime connector library version that the connector is using.
         clientTimestamp:
-          type: number
+          type: integer
           format: int64
           description: The current system timestamp from epoch of the client environment.
         clientTimeZoneOffset:
@@ -675,6 +720,23 @@ components:
             type: string
           example:
             ADD_SUMMARY_TO_NARRATIVE: true
+    HealthCheckFailureNotify:
+      type: object
+      properties:
+        errorType:
+          type: string
+          description: >
+            Type of non-transient health check failure that occurred.
+          enum:
+           - UNKNOWN
+           - TARGET_UNREACHABLE
+           - TARGET_AUTH_FAILURE
+           - TARGET_SUBSCRIPTION_FAILURE
+        userErrorMessage:
+          type: string
+          description: >
+            Error message shown to team members when trying to post time (until the failure is rescinded / cleared).
+            Optional, will overwrite the default error message of the provided errorType.
     TimeGroup:
       type: object
       properties:
@@ -713,7 +775,8 @@ components:
             - PENDING
             - SUCCESS
         submissionTime:
-          type: long
+          type: integer
+          format: int64
           description: Time when the user posted the time group. Measured in milliseconds since the Epoch.
         tags:
           type: array
@@ -842,7 +905,8 @@ components:
           type: integer
           description: The duration of the activity, in seconds.
         submittedDate:
-          type: long
+          type: integer
+          format: int64
           deprecated: true
           description: Time when the activity was submitted by the user in UTC, in the format yyyyMMddHHmmSSsss.
         modifier:

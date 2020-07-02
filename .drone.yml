@@ -3,11 +3,11 @@ kind: pipeline
 name: mirror-to-github
 
 steps:
-  - name: validate
+  - name: validate-openapi
     image: openapitools/openapi-generator-cli
     commands:
-      - echo $${DRONE_MACHINE}
-      - java -jar /opt/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar validate -i ./spec/openapi.yaml
+      - echo "calling openapi-generator-cli to validate spec/openapi.yaml"
+      - docker-entrypoint.sh validate -i spec/openapi.yaml --recommend
   - name: github-push
     image: quay.io/wt-build-support/alpine-git-bash
     environment:
