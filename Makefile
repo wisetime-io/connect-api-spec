@@ -1,7 +1,7 @@
 PWD := $(shell eval pwd)
 validate:
 	# Validate conformance to the OpenAPI specification
-	docker run --rm -v $(PWD)/spec/openapi.yaml:/local/openapi.yaml openapitools/openapi-generator-cli validate -i file:///local/openapi.yaml
+	docker run --rm -v ${PWD}/spec/openapi.yaml:/local/openapi.yaml openapitools/openapi-generator-cli validate -i file:///local/openapi.yaml --recommend
 
 ui:
 	echo "running spec via swagger-ui accessible at http://localhost:9500"
