@@ -11,9 +11,6 @@ steps:
 
   - name: pull-connect-api-server
     image: registry.dev.wisetime.com/alpine-git-bash
-    environment:
-      JOB_SSH_KEY_B64:
-        from_secret: git-ssh-key-b64
     commands:
       - git clone https://stash.practiceinsight.io/stash/scm/wtcom/connect-api-server.git
       - cd connect-api-server
