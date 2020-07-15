@@ -16,10 +16,8 @@ steps:
         from_secret: git-ssh-key-b64
     commands:
       - git clone https://stash.practiceinsight.io/stash/scm/wtcom/connect-api-server.git
-      - mkdir -p ~/.ssh && ssh-keyscan -p 7999 -t rsa stash.practiceinsight.io >> ~/.ssh/known_hosts
-      - echo "$${JOB_SSH_KEY_B64}" | base64 -d > ~/.ssh/job.key && chmod 600 ~/.ssh/job.key
       - cd connect-api-server
-      - GIT_SSH_COMMAND='ssh -i ~/.ssh/job.key' git submodule update --init
+      - git submodule update --init
 
   - name: test-connect-api-server
     image: azul/zulu-openjdk:11
@@ -57,13 +55,6 @@ services:
 
   - name: redis-service
     image: redis:4.0.14-alpine
-
----
-kind: secret
-name: git-ssh-key-b64
-get:
-  path: drone/stash/submodule-rsa
-  name: submod-key-b64
 
 ---
 kind: secret
