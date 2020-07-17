@@ -8,6 +8,26 @@ steps:
     commands:
       - echo "calling openapi-generator-cli to validate spec/openapi.yaml"
       - docker-entrypoint.sh validate -i spec/openapi.yaml --recommend
+
+  - name: pull-connect-api-server
+    image: registry.dev.wisetime.com/alpine-git-bash
+    commands:
+      - git clone https://stash.practiceinsight.io/stash/scm/wtcom/connect-api-server.git
+      - cd connect-api-server
+      - git submodule update --init
+
+  - name: test-connect-api-server
+    image: azul/zulu-openjdk:11
+    environment:
+      GRADLE_USER_HOME: .gcache
+      GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.internal.launcher.welcomeMessageEnabled=false
+      POSTGRES_TEST_HOST: postgres-service
+      REDIS_TEST_HOST: redis-service
+    commands:
+      - cd connect-api-server
+      - echo $${DRONE_MACHINE}
+      - ./gradlew -Pgenurl='/drone/src/spec/openapi.yaml' test
+
   - name: github-push
     image: quay.io/wt-build-support/alpine-git-bash
     environment:
@@ -24,6 +44,14 @@ trigger:
   event:
     - push
     - tag
+
+services:
+  - name: postgres-service
+    image: registry.dev.wisetime.com/test/postgres:latest
+    pull: always
+
+  - name: redis-service
+    image: redis:4.0.14-alpine
 
 ---
 kind: secret
