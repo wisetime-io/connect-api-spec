@@ -14,6 +14,7 @@ info:
 tags:
   - name: Team Info
   - name: Tags
+  - name: Activity Type
   - name: Posted Time
 servers:
   - url: https://wisetime.io/connect/api
@@ -203,6 +204,112 @@ paths:
           description: A valid API key is required to access this resource.
         '404':
           description: Tag or keyword not found.
+        '500':
+          description: An unexpected error occured.
+
+  /activitytype:
+    post:
+      operationId: activity-type-upsert
+      summary: Create a new activity type, or update the description of the existing one
+      tags:
+        - Activity Type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertActivityTypeRequest'
+      responses:
+        '200':
+          description: Activity type successfully created or updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpsertActivityTypeResponse'
+        '400':
+          description: Invalid request. Description or code is missing.
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
+  /activitytype/batch:
+    post:
+      operationId: activity-type-batch
+      summary: Create new activity types, or update description of existing in batch (up to 2000 items at once)
+      tags:
+        - Activity Type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchUpsertActivityTypeRequest'
+      responses:
+        '200':
+          description: Activity types successfully created or updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchUpsertActivityTypeResponse'
+        '400':
+          description: Invalid request. Activity type description or code is missing.
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
+  /activitytype/sync:
+    post:
+      operationId: activity-type-sync
+      summary: Sync all activity types
+      tags:
+        - Activity Type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncActivityTypesRequest'
+      responses:
+        '200':
+          description: Activity types successfully synced.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncActivityTypesResponse'
+        '400':
+          description: Invalid request. Activity type description or code is missing.
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
+  /activitytype/delete:
+    post:
+      operationId: activity-type-delete
+      summary: Delete an existing activity type
+      tags:
+        - Activity Type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteActivityTypeRequest'
+      responses:
+        '200':
+          description: Activity type successfully deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteActivityTypeResponse'
+        '400':
+          description: Invalid request. Activity type code is required.
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: Activity type not found.
         '500':
           description: An unexpected error occured.
 
@@ -662,6 +769,48 @@ components:
           description: "The keyword to delete."
     DeleteKeywordResponse:
       type: object
+    UpsertActivityTypeRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Activity code from the connected system. Must be unique.
+        description:
+          type: string
+          description: Activity description from the connected system.
+    UpsertActivityTypeResponse:
+      type: object
+    BatchUpsertActivityTypeRequest:
+      type: object
+      properties:
+        activityTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityType'
+          description: Activity types to create or update
+    BatchUpsertActivityTypeResponse:
+      type: object
+    SyncActivityTypesRequest:
+      type: object
+      properties:
+        activityTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityType'
+          description: >
+            An array of all available activity types of the connected system.
+            All the activity types that doesn't exist yet (checked by code) will be created.
+            All the existing activity types that aren't listed here (checked by code) will be deleted.
+    SyncActivityTypesResponse:
+      type: object
+    DeleteActivityTypeRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Activity code from the connected system.
+    DeleteActivityTypeResponse:
+      type: object
     ManagedConfigRequest:
       type: object
       properties:
@@ -817,6 +966,15 @@ components:
           description: >
             Optional. The text that is displayed to the user next to the name in the user interface.
             For example, this could take the form of a matter description or a project name.
+    ActivityType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Activity code from the connected system. Must be unique.
+        description:
+          type: string
+          description: Activity description from the connected system.
     User:
       type: object
       description: Information about the user who posted the time group.
