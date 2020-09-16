@@ -106,7 +106,7 @@ paths:
               $ref: '#/components/schemas/DeleteTagRequest'
       responses:
         '200':
-          description: Tag successfully updated.
+          description: Tag successfully deleted.
           content:
             application/json:
               schema:
@@ -192,7 +192,7 @@ paths:
               $ref: '#/components/schemas/DeleteKeywordRequest'
       responses:
         '200':
-          description: Tag successfully deleted.
+          description: Keyword successfully deleted.
           content:
             application/json:
               schema:
