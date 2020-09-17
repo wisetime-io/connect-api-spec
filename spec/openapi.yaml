@@ -707,6 +707,11 @@ components:
             All the existing activity types that aren't listed here (checked by code) will be deleted.
     SyncActivityTypesResponse:
       type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
     ManagedConfigRequest:
       type: object
       properties:
