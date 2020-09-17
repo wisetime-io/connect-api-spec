@@ -872,10 +872,14 @@ components:
       properties:
         code:
           type: string
-          description: Activity code from the connected system. Must be unique.
+          description: >
+            Activity code from the connected system. Must be unique.
+            It's the only property used to determine if the activity type already exists.
         description:
           type: string
-          description: Activity description from the connected system.
+          description: >
+            Activity description from the connected system.
+            It will be used to populate the `WiseTime console label` column, if the activity type doesn't exist yet. Otherwise the existing value will be kept.
     User:
       type: object
       description: Information about the user who posted the time group.
