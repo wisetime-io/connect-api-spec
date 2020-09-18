@@ -232,7 +232,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/SyncActivityTypesResponse'
         '400':
-          description: Invalid request. Activity type description or code is missing. The number of activity types in request exceeded.
+          description: Invalid request. Activity type description or code is missing, or the number of activity types in request exceeded.
         '401':
           description: A valid API key is required to access this resource.
         '500':
