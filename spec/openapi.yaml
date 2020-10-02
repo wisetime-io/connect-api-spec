@@ -14,6 +14,7 @@ info:
 tags:
   - name: Team Info
   - name: Tags
+  - name: Activity Type
   - name: Posted Time
 servers:
   - url: https://wisetime.io/connect/api
@@ -106,7 +107,7 @@ paths:
               $ref: '#/components/schemas/DeleteTagRequest'
       responses:
         '200':
-          description: Tag successfully updated.
+          description: Tag successfully deleted.
           content:
             application/json:
               schema:
@@ -192,7 +193,7 @@ paths:
               $ref: '#/components/schemas/DeleteKeywordRequest'
       responses:
         '200':
-          description: Tag successfully deleted.
+          description: Keyword successfully deleted.
           content:
             application/json:
               schema:
@@ -203,6 +204,37 @@ paths:
           description: A valid API key is required to access this resource.
         '404':
           description: Tag or keyword not found.
+        '500':
+          description: An unexpected error occured.
+
+  /activitytype/sync:
+    post:
+      operationId: activity-type-sync
+      summary: Sync all activity types
+      description: >
+        It is important ALL activity types are sent in one request.
+        WiseTime will use the list of activity types sent to detect activity types that were removed since last sync, and disable them in the console UI.
+
+        A maximum of 2000 activity types can be synced this way. If you have more activity types, please contact us at support@wisetime.com to discuss alternative sync strategies.
+      tags:
+        - Activity Type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncActivityTypesRequest'
+      responses:
+        '200':
+          description: Activity types successfully synced.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncActivityTypesResponse'
+        '400':
+          description: Invalid request. Activity type description or code is missing, or the number of activity types in request exceeded.
+        '401':
+          description: A valid API key is required to access this resource.
         '500':
           description: An unexpected error occured.
 
@@ -662,6 +694,24 @@ components:
           description: "The keyword to delete."
     DeleteKeywordResponse:
       type: object
+    SyncActivityTypesRequest:
+      type: object
+      properties:
+        activityTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityType'
+          description: >
+            An array of ALL available activity types to be synced from a connected system.
+            All the activity types that doesn't exist yet (checked by code) will be created.
+            All the existing activity types that aren't listed here (checked by code) will be deleted.
+    SyncActivityTypesResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
     ManagedConfigRequest:
       type: object
       properties:
@@ -817,6 +867,19 @@ components:
           description: >
             Optional. The text that is displayed to the user next to the name in the user interface.
             For example, this could take the form of a matter description or a project name.
+    ActivityType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: >
+            Activity code from the connected system. Must be unique.
+            It's the only property used to determine if the activity type already exists.
+        description:
+          type: string
+          description: >
+            Activity description from the connected system.
+            It will be used to populate the `WiseTime console label` column, if the activity type doesn't exist yet. Otherwise the existing value will be kept.
     User:
       type: object
       description: Information about the user who posted the time group.
