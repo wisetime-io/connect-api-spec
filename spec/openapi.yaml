@@ -211,7 +211,9 @@ paths:
     post:
       operationId: activity-type-sync-start
       summary: Start activity types sync session
-      description: Initiates a sync session and responds with syncSessionId that can be used for further activity types uploads within the session.
+      description: >
+        Initiates a sync session and responds with syncSessionId that can be used for further activity types uploads within the session.
+        While activity types can be sent to WiseTime in batches without a sync session, starting a sync session for the patch uploads means that WiseTime will be able to detect activity types that are no longer in the connected system, and delete these when the sync session is completed by the connector.
       tags:
         - Activity Type
       responses:
@@ -245,10 +247,10 @@ paths:
       responses:
         '200':
           description: Sync session completed successfully.
-        '400':
-          description: Invalid request. Sync session doesn't exist or already completed/cancelled.
         '401':
           description: A valid API key is required to access this resource.
+        '404':
+          description: Sync session doesn't exist or already completed/cancelled.
         '500':
           description: An unexpected error occured.
 
@@ -271,10 +273,10 @@ paths:
       responses:
         '200':
           description: Sync session cancelled successfully.
-        '400':
-          description: Invalid request. Sync session doesn't exist or already completed/cancelled.
         '401':
           description: A valid API key is required to access this resource.
+        '404':
+          description: Sync session doesn't exist or already completed/cancelled.
         '500':
           description: An unexpected error occured.
 
