@@ -222,13 +222,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StartSyncSessionResponse'
+                $ref: '#/components/schemas/SyncSession'
         '401':
           description: A valid API key is required to access this resource.
         '500':
           description: An unexpected error occured.
 
-  /activitytype/sync/{syncSessionId}/complete:
+  /activitytype/sync/complete:
     post:
       operationId: activity-type-sync-complete
       summary: Complete activity types sync session
@@ -237,13 +237,12 @@ paths:
         All the activity types that were lastly created/updated before the session start will be deleted.
       tags:
         - Activity Type
-      parameters:
-        - in: path
-          name: syncSessionId
-          schema:
-            type: string
-          required: true
-          description: Id of the sync session to complete.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncSession'
       responses:
         '200':
           description: Sync session completed successfully.
@@ -254,7 +253,7 @@ paths:
         '500':
           description: An unexpected error occured.
 
-  /activitytype/sync/{syncSessionId}/cancel:
+  /activitytype/sync/cancel:
     post:
       operationId: activity-type-sync-cancel
       summary: Cancel activity types sync session
@@ -263,13 +262,12 @@ paths:
         This API call has no impact on activity types.
       tags:
         - Activity Type
-      parameters:
-        - in: path
-          name: syncSessionId
-          schema:
-            type: string
-          required: true
-          description: Id of the sync session to cancel.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncSession'
       responses:
         '200':
           description: Sync session cancelled successfully.
@@ -766,12 +764,12 @@ components:
           description: "The keyword to delete."
     DeleteKeywordResponse:
       type: object
-    StartSyncSessionResponse:
+    SyncSession:
       type: object
       properties:
         syncSessionId:
           type: string
-          description: Sync session identifier that can be used for further uploads within the session.
+          description: Sync session identifier that can be used for the patch uploads or session completion/cancellation.
     SyncActivityTypesRequest:
       type: object
       properties:
