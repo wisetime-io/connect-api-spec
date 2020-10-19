@@ -300,7 +300,7 @@ paths:
         '400':
           description: >
             Invalid request:
-              - Activity type external_id or label is missing.
+              - Activity type code or label is missing.
               - The number of activity types in request exceeded.
               - Sync session id was provided but session doesn't exist or already completed/cancelled.
         '401':
