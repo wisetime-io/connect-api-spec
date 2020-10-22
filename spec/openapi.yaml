@@ -213,7 +213,7 @@ paths:
       summary: Start activity types sync session
       description: >
         Initiates a sync session and responds with syncSessionId that can be used for further activity types uploads within the session.
-        While activity types can be sent to WiseTime in batches without a sync session, starting a sync session for the patch uploads means that WiseTime will be able to detect activity types that are no longer in the connected system, and delete these when the sync session is completed by the connector.
+        While activity types can be sent to WiseTime in batches without a sync session, starting a sync session for the batch uploads means that WiseTime will be able to detect activity types that are no longer in the connected system, and delete these when the sync session is completed by the connector.
       tags:
         - Activity Type
       responses:
