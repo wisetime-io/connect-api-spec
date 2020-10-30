@@ -207,15 +207,81 @@ paths:
         '500':
           description: An unexpected error occured.
 
-  /activitytype/sync:
+  /activitytype/sync/start:
     post:
-      operationId: activity-type-sync
-      summary: Sync all activity types
+      operationId: activity-type-sync-start
+      summary: Start activity types sync session
       description: >
-        It is important ALL activity types are sent in one request.
-        WiseTime will use the list of activity types sent to detect activity types that were removed since last sync, and disable them in the console UI.
+        Initiates a sync session and responds with syncSessionId that can be used for further activity types uploads within the session.
+        While activity types can be sent to WiseTime in batches without a sync session, starting a sync session for the batch uploads means that WiseTime will be able to detect activity types that are no longer in the connected system, and delete these when the sync session is completed by the connector.
+      tags:
+        - Activity Type
+      responses:
+        '200':
+          description: Sync session initiated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncSession'
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
 
-        A maximum of 2000 activity types can be synced this way. If you have more activity types, please contact us at support@wisetime.com to discuss alternative sync strategies.
+  /activitytype/sync/complete:
+    post:
+      operationId: activity-type-sync-complete
+      summary: Complete activity types sync session
+      description: >
+        Completes a sync session so its syncSessionId can not be used anymore.
+        All the activity types that were lastly created/updated before the session start will be deleted.
+      tags:
+        - Activity Type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncSession'
+      responses:
+        '200':
+          description: Sync session completed successfully.
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: Sync session doesn't exist or already completed/cancelled.
+        '500':
+          description: An unexpected error occured.
+
+  /activitytype/sync/cancel:
+    post:
+      operationId: activity-type-sync-cancel
+      summary: Cancel activity types sync session
+      description: >
+        Cancels a sync session so its syncSessionId can not be used anymore.
+        This API call has no impact on activity types.
+      tags:
+        - Activity Type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncSession'
+      responses:
+        '200':
+          description: Sync session cancelled successfully.
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: Sync session doesn't exist or already completed/cancelled.
+        '500':
+          description: An unexpected error occured.
+
+  /activitytype/batch:
+    post:
+      operationId: activity-type-upsert-batch
+      summary: Create new activity types, or update existing in batch (up to 2000 items at once)
       tags:
         - Activity Type
       requestBody:
@@ -226,13 +292,17 @@ paths:
               $ref: '#/components/schemas/SyncActivityTypesRequest'
       responses:
         '200':
-          description: Activity types successfully synced.
+          description: Activity types successfully created or updated.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SyncActivityTypesResponse'
         '400':
-          description: Invalid request. Activity type description or code is missing, or the number of activity types in request exceeded.
+          description: >
+            Invalid request:
+              - Activity type code or label is missing.
+              - The number of activity types in request exceeded.
+              - Sync session id was provided but session doesn't exist or already completed/cancelled.
         '401':
           description: A valid API key is required to access this resource.
         '500':
@@ -694,6 +764,12 @@ components:
           description: "The keyword to delete."
     DeleteKeywordResponse:
       type: object
+    SyncSession:
+      type: object
+      properties:
+        syncSessionId:
+          type: string
+          description: Sync session identifier that can be used for the patch uploads or session completion/cancellation.
     SyncActivityTypesRequest:
       type: object
       properties:
@@ -701,10 +777,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ActivityType'
-          description: >
-            An array of ALL available activity types to be synced from a connected system.
-            All the activity types that doesn't exist yet (checked by code) will be created.
-            All the existing activity types that aren't listed here (checked by code) will be deleted.
+          description: An array of activity types to be created/updated.
+        syncSessionId:
+          type: string
+          description: Optional. Identifier of the sync session.
     SyncActivityTypesResponse:
       type: object
       properties:
@@ -873,13 +949,17 @@ components:
         code:
           type: string
           description: >
-            Activity code from the connected system. Must be unique.
+            Activity type id/code from the connected system. Must be unique.
             It's the only property used to determine if the activity type already exists.
+        label:
+          type: string
+          description: >
+            Activity type short name from the connected system.
+            It will be used to populate the `WiseTime console label` column, if the activity type doesn't exist yet. Otherwise the existing value will be kept.
         description:
           type: string
           description: >
-            Activity description from the connected system.
-            It will be used to populate the `WiseTime console label` column, if the activity type doesn't exist yet. Otherwise the existing value will be kept.
+            Activity type description from the connected system.
     User:
       type: object
       description: Information about the user who posted the time group.
