@@ -10,7 +10,7 @@ steps:
       - docker-entrypoint.sh validate -i spec/openapi.yaml --recommend
 
   - name: pull-connect-api-server
-    image: registry.dev.wisetime.com/alpine-git-bash
+    image: registry.dev.wisetime.com/git
     commands:
       - git clone https://stash.practiceinsight.io/stash/scm/wtcom/connect-api-server.git
       - cd connect-api-server
@@ -29,7 +29,7 @@ steps:
       - ./gradlew -Pgenurl='/drone/src/spec/openapi.yaml' test
 
   - name: github-push
-    image: quay.io/wt-build-support/alpine-git-bash
+    image: registry.dev.wisetime.com/git
     environment:
       GITHUB_SSH_KEY_B64:
         from_secret: github-ssh-key-b64
