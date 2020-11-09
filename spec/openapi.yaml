@@ -691,6 +691,12 @@ components:
             Identifier of the resource that manages this tag.
             If blank or missing, the value will be defaulted to the connector's name.
           type: string
+        externalId:
+          description: >
+            Identifier of the tag in the connected system.
+            The external ID will be sent when time is posted with this tag, so that the posted time can be recorded against the
+            relevant record in the connected system.
+          type: string
         metadata:
           $ref: '#/components/schemas/TagMetadataSet'
         additionalKeywords:
@@ -943,6 +949,11 @@ components:
           description: >
             Optional. The text that is displayed to the user next to the name in the user interface.
             For example, this could take the form of a matter description or a project name.
+        externalId:
+          type: string
+          description: >
+            The ID of the external entity for which the tag was created. The external ID is used to
+            post time against the correct record in the connected system.
     ActivityType:
       type: object
       properties:
@@ -1026,7 +1037,7 @@ components:
           description: Reason for the failure, will be displayed to the user.
         externalId:
           type: string
-          description: Reference in external system to time group.
+          description: An identifier in the connected system that relates to the posted time group.
     TimeRow:
       type: object
       properties:
