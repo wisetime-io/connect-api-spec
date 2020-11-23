@@ -971,6 +971,9 @@ components:
           type: string
           description: >
             Activity type description from the connected system.
+        enabled:
+          type: boolean
+          description: Identifies whether activity type should be automatically enabled in WiseTime.
     User:
       type: object
       description: Information about the user who posted the time group.
