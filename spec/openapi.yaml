@@ -973,7 +973,9 @@ components:
             Activity type description from the connected system.
         enabled:
           type: boolean
-          description: Identifies whether activity type should be automatically enabled in WiseTime.
+          description: >
+            Whether activity type should be enabled in WiseTime.
+            If false, the activity type will be created, but will not be available in the WiseTime console until it is enabled in team settings. Defaults to false.
     User:
       type: object
       description: Information about the user who posted the time group.
