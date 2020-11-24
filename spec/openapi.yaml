@@ -971,10 +971,10 @@ components:
           type: string
           description: >
             Activity type description from the connected system.
-        enabled:
+        enableIfNew:
           type: boolean
           description: >
-            Whether activity type should be enabled in WiseTime.
+            Whether activity type should be enabled in WiseTime if it is being synced for the first time. If the activity type already exists in WiseTime, its enabled state will remain unchanged.
             If false, the activity type will be created, but will not be available in the WiseTime console until it is enabled in team settings. Defaults to false.
     User:
       type: object
