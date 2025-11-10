@@ -1,0 +1,1288 @@
+openapi: 3.0.1
+info:
+  title: WiseTime Connect API
+  version: "1.3.0"
+  description: >-
+    Use the WiseTime Connect API to build connectors to your application.
+  contact:
+    name: WiseTime Connect API Support
+    email: contact@wisetime.com
+    url: https://wisetime.com/docs/connect
+  x-logo:
+    url: "https://storage.googleapis.com/pi-gcp-resources/email_assets/pi-account/wt-connect-logo.svg"
+    altText: WiseTime Connect
+tags:
+  - name: Team Info
+  - name: Tags
+  - name: Tag Categories
+  - name: Activity Types
+  - name: Posted Time
+  - name: Connector Management
+servers:
+  - url: https://wisetime.com/connect/api
+paths:
+  /team/info:
+    get:
+      operationId: get-team-info
+      summary: Retrieve information about the team
+      tags:
+        - Team Info
+      responses:
+        '200':
+          description: Successfully found the team info.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamInfoResult'
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
+  /tag:
+    post:
+      operationId: tag-upsert
+      summary: Create a new tag, or update the tag if it already exists
+      tags:
+        - Tags
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertTagRequest'
+      responses:
+        '200':
+          description: Tag successfully created or updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpsertTagResponse'
+        '400':
+          description: Invalid request. Tag name is missing or path is invalid.
+        '401':
+          description: A valid API key is required to access this resource.
+        '402':
+          description: Number of tags plan limit exceeded.
+        '500':
+          description: An unexpected error occured.
+
+  /tag/batch:
+    post:
+      operationId: batch-tag-upsert
+      summary: Create new tags, or update existing in batch (up to 2000 items at once)
+      tags:
+        - Tags
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchUpsertTagRequest'
+      responses:
+        '200':
+          description: Tag successfully created or updated.
+        '400':
+          description: Invalid request. Tag name is missing or path is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchUpsertTagResponse'
+        '401':
+          description: A valid API key is required to access this resource.
+        '402':
+          description: Number of tags plan limit exceeded.
+        '500':
+          description: An unexpected error occured.
+
+  /tag/delete:
+    post:
+      operationId: tag-delete
+      summary: Delete an existing tag
+      tags:
+        - Tags
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteTagRequest'
+      responses:
+        '200':
+          description: Tag successfully deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteTagResponse'
+        '400':
+          description: Invalid request. Tag name is required.
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: Tag not found.
+        '500':
+          description: An unexpected error occured.
+
+  /tag/metadata/delete:
+    post:
+      operationId: tag-metadata-delete
+      summary: Permanently deletes the specified metadata from an existing tag.
+      description: >
+        Provide the metadata names that you want to delete.
+      tags:
+        - Tags
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagMetadataDeleteRequest'
+      responses:
+        '200':
+          description: Fulfilled when metadata was deleted, not found or already deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagMetadataDeleteResponse'
+        '400':
+          description: Invalid request. Tag name and metadata are required.
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: Metadata cannot be deleted since the requested tag does not exist.
+        '500':
+          description: An unexpected error occured.
+
+  /tag/keyword:
+    post:
+      operationId: tag-keywords-add
+      summary: Add one or more keywords to an existing tag
+      tags:
+        - Tags
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddKeywordsRequest'
+      responses:
+        '200':
+          description: Keyword(s) successfully added.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddKeywordsResponse'
+        '400':
+          description: Invalid request. Tag name and additional keywords are required.
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: Tag not found.
+        '500':
+          description: An unexpected error occured.
+
+  /tag/keyword/delete:
+    post:
+      operationId: tag-keyword-delete
+      summary: Delete an existing keyword from a tag
+      tags:
+        - Tags
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteKeywordRequest'
+      responses:
+        '200':
+          description: Keyword successfully deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteKeywordResponse'
+        '400':
+          description: Invalid request. Tag name and keyword are required.
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: Tag or keyword not found.
+        '500':
+          description: An unexpected error occured.
+
+  /tagcategory/batch:
+    post:
+      operationId: batch-tag-category-upsert
+      summary: >
+        Create new tag categories, or update existing in batch (up to 2000 items at once).
+        If tag category is not found by external ID, it is created.
+        externalId is a required field to use the batch creation endpoint.
+        No partial update, if some of categories failed to be processed, entire batch considered faulty.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchUpsertTagCategoryRequest'
+      responses:
+        '200':
+          description: Tag categories were successfully upserted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchUpsertTagCategoryResponse'
+        '400':
+          description: Invalid request.
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+      tags:
+        - Tag Categories
+
+  /tagcategory/delete:
+    post:
+      operationId: tag-category-delete
+      summary: >
+        Delete tag category and all related tags
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteTagCategoryRequest'
+      responses:
+        '200':
+          description: Tag category deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteTagCategoryResponse'
+        '400':
+          description: Invalid request.
+        '404':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+      tags:
+        - Tag Categories
+
+  /activitytype/sync/start:
+    post:
+      operationId: activity-type-sync-start
+      summary: Start activity types sync session
+      description: >
+        Initiates a sync session and responds with syncSessionId that can be used for further activity types uploads within the session.
+        While activity types can be sent to WiseTime in batches without a sync session, starting a sync session for the batch uploads means that WiseTime will be able to detect activity types that are no longer in the connected system, and delete these when the sync session is completed by the connector.
+      tags:
+        - Activity Types
+      responses:
+        '200':
+          description: Sync session initiated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncSession'
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
+  /activitytype/sync/complete:
+    post:
+      operationId: activity-type-sync-complete
+      summary: Complete activity types sync session
+      description: >
+        Completes a sync session so its syncSessionId can not be used anymore.
+        All the activity types that were lastly created/updated before the session start will be deleted.
+      tags:
+        - Activity Types
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncSession'
+      responses:
+        '200':
+          description: Sync session completed successfully.
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: Sync session doesn't exist or already completed/cancelled.
+        '500':
+          description: An unexpected error occured.
+
+  /activitytype/sync/cancel:
+    post:
+      operationId: activity-type-sync-cancel
+      summary: Cancel activity types sync session
+      description: >
+        Cancels a sync session so its syncSessionId can not be used anymore.
+        This API call has no impact on activity types.
+      tags:
+        - Activity Types
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncSession'
+      responses:
+        '200':
+          description: Sync session cancelled successfully.
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: Sync session doesn't exist or already completed/cancelled.
+        '500':
+          description: An unexpected error occured.
+
+  /activitytype/batch:
+    post:
+      operationId: activity-type-upsert-batch
+      summary: Create new activity types, or update existing in batch (up to 2000 items at once)
+      tags:
+        - Activity Types
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncActivityTypesRequest'
+      responses:
+        '200':
+          description: Activity types successfully created or updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncActivityTypesResponse'
+        '400':
+          description: >
+            Invalid request:
+              - Activity type code or label is missing.
+              - The number of activity types in request exceeded.
+              - Sync session id was provided but session doesn't exist or already completed/cancelled.
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
+  /postedtime:
+    get:
+      operationId: fetch-posted-time
+      summary: Returns posted time with pending status.
+      description: >
+        Use this endpoint to fetch posted time for processing.
+        This is a long polling call (an alternative to using the webhook mechanism).
+        The connection will be held open for a maximum of 60 seconds or until there is a new posted time event.
+        When calling this method without first calling the /postedtime/registerfetchclient endpoint, recording posted time for fetching
+        will implicitly be turned on.
+      tags:
+        - Posted Time
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          required: false
+          description: Maximum amount of posted time entries to retrieve. If not set, the API will return up to a maximum of 25 entries for each request.
+      responses:
+        '200':
+          description: List of posted time events.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TimeGroup'
+        '400':
+          description: Invalid request. Limit cannot be smaller than 1.
+        '401':
+          description: A valid API key is required to access this resource.
+        '409':
+          description: This team has a registered posted time webhook. Switching to use fetch client is required.
+        '500':
+          description: An unexpected error occured.
+
+  /postedtime/list:
+    get:
+      operationId: list-posted-time
+      summary: Returns list of posted time with pending or success status.
+      description: >
+        Returns all time groups for team in descending order of submission time starting from now. This is not a long polling endpoint.
+      tags:
+        - Posted Time
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          required: false
+          description: Maximum number of items to return. Should be between 1 and 500. Default is 100.
+        - in: query
+          name: submittedBefore
+          schema:
+            type: integer
+          required: false
+          description: >
+            Filter response to return only time groups submitted before requested timestamp.
+            If empty - returns latest time groups. Note that the submisisonTime may be the same for multiple time groups as
+            users may submit more than 1 time group as a single operation. Measured in milliseconds since the Epoch.
+      responses:
+        '200':
+          description: List of time groups.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TimeGroup'
+        '400':
+          description: Invalid request.
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
+  /postedtime/registerfetchclient:
+    post:
+      operationId: register-for-fetch
+      summary: Register the intent to fetch time from the /postedtime endpoint.
+      description: WiseTime will start recording posted time events that can be fetched via the /postedtime endpoint.
+      tags:
+        - Posted Time
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterFetchClientRequest'
+      responses:
+        '200':
+          description: Fetch client successfully registered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterFetchClientResult'
+        '400':
+          description: Invalid request. Callback URL is required.
+        '409':
+          description: This team already has a registered fetch client or webhook.
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
+  /postedtime/unregisterfetchclient:
+    post:
+      operationId: unregister-from-fetch
+      summary: Delete existing fetch client, unsubscribing your application from posted time fetching.
+      description: WiseTime will stop recording posted time events for fetch when users post time to your team.
+      tags:
+        - Posted Time
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnregisterFetchClientRequest'
+      responses:
+        '200':
+          description: Fetch client successfully unregistered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnregisterFetchClientResult'
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: Fetch client not found.
+        '409':
+          description: This team has a registered posted time webhook. Switching to use fetch client is required.
+        '500':
+          description: An unexpected error occured.
+
+  /postedtime/status:
+    post:
+      operationId: update-posted-time-status
+      summary: Updates the status of a received time group. Providing its success or failure to be processed.
+      description: >
+        This is intended for use with the fetch mechanism only. Not to be used with webhooks.
+        If this endpoint isn't called for a time group within a certain amount of time after fetching it
+        the time group will be made available again for fetching.
+      tags:
+        - Posted Time
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TimeGroupStatus'
+      responses:
+        '200':
+          description: Status of the time group was updated successfully.
+        '400':
+          description: Invalid request.
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: The time group/fetch client id pair was not found.
+        '409':
+          description: This team has a registered posted time webhook. Switching to use fetch client is required.
+        '500':
+          description: An unexpected error occured.
+
+  /postedtime/subscribe:
+    post:
+      operationId: post-subscribe
+      summary: Subscribe to be notified when a user posts time information to your team.
+      description: WiseTime will call your webhook with a payload of the posted time information. See the [posted time webhook documentation](/docs/connect/posted-time-webhook/) for details. Each team is limited to one webhook callback.
+      tags:
+        - Posted Time
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscribeRequest'
+      responses:
+        '200':
+          description: Webhook subscription successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscribeResult'
+        '400':
+          description: Invalid request. Callback URL is required.
+        '409':
+          description: This team already has a registered webhook or fetch client.
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+      callbacks: # Callback definition
+        timePostedEvent: # Event name
+          '{$request.body#/callbackUrl}': # Refers to the passed URL
+            post:
+              operationId: post-callback
+              requestBody: # Contents of the callback message
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/TimeGroup'
+              responses: # Expected responses to the callback message
+                '200':
+                  description: 2XX codes indicate that the time group was processed successfully.
+                '400':
+                  description: >
+                    Indicates that permanent failure has occurred, to signify that no retries should be made.
+                    Returns a user-friendly error message which describes the problem.
+                  content:
+                    text/plain:
+                      schema:
+                        type: string
+                '500':
+                  description: >
+                    Indicates a transient error. The web hook post request will be retried after a delay.
+                    Returns a user-friendly error message which describes the problem.
+                  content:
+                    text/plain:
+                      schema:
+                        type: string
+
+  /postedtime/unsubscribe:
+    post:
+      operationId: delete-webhook
+      summary: Delete existing webhook for given connector (specified by api key), unsubscribing your application from posted time notifications.
+      description: WiseTime will stop calling your webhook when users post time to your team.
+      tags:
+        - Posted Time
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnsubscribeRequest'
+      responses:
+        '200':
+          description: Webhook successfully deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnsubscribeResult'
+        '401':
+          description: A valid API key is required to access this resource.
+        '404':
+          description: No Webhook found for provided api key.
+        '500':
+          description: An unexpected error occured.
+
+  /team/managed/config:
+    post:
+      operationId: team-managed-config
+      summary: Retrieve configuration particulars to suppport the managed connector service.
+      tags:
+        - Connector Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManagedConfigRequest'
+      responses:
+        '200':
+          description: Managed config response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManagedConfigResponse'
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
+  /healthcheck/failure/notify:
+    post:
+      operationId: health-check-failure-notify
+      summary: >
+        Report non-transient health check failure.
+        For unknown error codes the provided error message will be shown to users on time posting.
+        For known error codes connect-api-server will determine the appropriate message.
+      tags:
+        - Connector Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HealthCheckFailureNotify'
+      responses:
+        '204':
+          description: Error state has been recorded
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
+  /healthcheck/failure/rescind:
+    post:
+      operationId: health-check-failure-rescind
+      summary: Rescind (clear) a previously reported health check failure.
+      tags:
+        - Connector Management
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HealthCheckFailureRescind'
+      responses:
+        '204':
+          description: Error state has been rescinded/cleared
+        '401':
+          description: A valid API key is required to access this resource.
+        '500':
+          description: An unexpected error occured.
+
+components:
+  securitySchemes:
+    ConnectApiKeyAuth:
+      description: See the [Authentication documentation page](/docs/connect/authentication/) for more details.
+      type: apiKey
+      in: header
+      name: x-api-key
+  schemas:
+    TagMetadataSet:
+      type: object
+      description: >
+        You can assign metadata to a tag.  You provide this information as a name-value (key-value) pair.
+        The metadata names are case sensitive and will be displayed in reports, it is recommended the names be descriptive to clarify its meaning.
+        In the case of providing any name-value where the name is already assigned as metadata to the tag, the value will be updated with value supplied.
+        To delete/remove a name-value pair stored as metadata on a tag, you must use the `tag-metadata-delete` operation.
+      additionalProperties:
+        type: string
+      example:
+        Billing Group: billable
+    TagMetadataDeleteRequest:
+      type: object
+      properties:
+        tagName:
+          type: string
+          description: The tag from which to delete the tag metadata.
+        metadataNames:
+          description: The name(s) of the tag metadata to delete.
+          type: array
+          items:
+            type: string
+      required:
+        - tagName
+        - metadataNames
+    TagMetadataDeleteResponse:
+      type: object
+    HealthCheckFailureRescind:
+      type: object
+    UpsertTagRequest:
+      type: object
+      properties:
+        name:
+          description: "Tag name to create. If a tag by this name already exists, the tag will be updated."
+          type: string
+        description:
+          description: >
+            Displayed in the GUI and search functions.
+            An empty (or null) description will be ignored, the description will remain with the previous value instead of replacing it.
+          type: string
+        excludeTagNameKeyword:
+          description: >
+            The default behaviour when creating a tag is for the tagName to be added as a keyword for the tag.  If
+            excludeTagNameKeyword is set to true, the tagName will not be added as a keyword, unless it is explicitly
+            defined in the additionalKeywords list of the request.
+          type: boolean
+        tagCategoryId:
+          description: >
+            The ID of the category that this tag belongs to.
+            This field is empty if the tag does not belong to a category.
+          type: string
+        path:
+          description: >
+            Default is '/'. Can be used to group tags into logical groups. Deprecated. Will be removed in future.
+          type: string
+          deprecated: true
+        managedBy:
+          description: >
+            Identifier of the resource that manages this tag.
+          type: string
+        externalId:
+          description: >
+            Identifier of the tag in the connected system.
+            The external ID will be sent when time is posted with this tag, so that the posted time can be recorded against the
+            relevant record in the connected system.
+          type: string
+        defaultActivityTypeCode:
+          description: >
+            Default activity type code is applied to time entry with this tag when user haven't assigned any activity type explicitly.
+          type: string
+        metadata:
+          $ref: '#/components/schemas/TagMetadataSet'
+        additionalKeywords:
+          description: >
+            A tag is applied to a time row if one of its keywords matches text in the time row activity description.
+            Keywords provided via this property will be added to the list of existing keywords for the tag. Existing keywords won't be removed.
+          type: array
+          items:
+            type: string
+        url:
+          description: >
+            If a URL is provided, the tag will be a clickable link in the WiseTime console.
+            Clicking on the tag will open the URL.
+          type: string
+        visibility:
+          description: >
+            Defines tag visibility. Default is PUBLIC. Private matters are only accessible by explicitly authorized team members.
+          type: string
+          enum:
+            - PUBLIC
+            - PRIVATE
+        assigneeExternalIds:
+          description: >
+            IDs in external system of users associated with the matter.
+          type: array
+          items:
+            type: string
+    BatchUpsertTagRequest:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/UpsertTagRequest'
+    BatchUpsertTagResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+    ErrorItem:
+      type: object
+      properties:
+        index:
+          description: Index of item in the request to which this error corresponds to.
+          type: integer
+        errorDescription:
+          description: String with error details.
+          type: string
+    UpsertTagResponse:
+      type: object
+    DeleteTagRequest:
+      oneOf:
+        - type: object
+          properties:
+            name:
+              description: "Tag name to delete."
+              type: string
+        - type: object
+          properties:
+            id:
+              description: "Tag id to delete."
+              type: string
+    DeleteTagResponse:
+      type: object
+    AddKeywordsRequest:
+      type: object
+      properties:
+        tagName:
+          type: string
+          description: "The tag to which to add the keywords."
+        externalId:
+          description: >
+            The identifier of the tag in the connected system.
+          type: string
+        additionalKeywords:
+          type: array
+          items:
+            type: string
+          description: >
+            One or more new keywords for the tag.
+            Keywords provided via this property will be added to the list of existing keywords for the tag. Existing keywords won't be removed.
+    AddKeywordsResponse:
+      type: object
+    DeleteKeywordRequest:
+      type: object
+      properties:
+        tagName:
+          type: string
+          description: "The tag from which to delete the keywords."
+        keyword:
+          type: string
+          description: "The keyword to delete."
+    DeleteKeywordResponse:
+      type: object
+    SyncSession:
+      type: object
+      properties:
+        syncSessionId:
+          type: string
+          description: Sync session identifier that can be used for the patch uploads or session completion/cancellation.
+    SyncActivityTypesRequest:
+      type: object
+      properties:
+        activityTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityType'
+          description: An array of activity types to be created/updated.
+        syncSessionId:
+          type: string
+          description: Optional. Identifier of the sync session.
+    SyncActivityTypesResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+    ManagedConfigRequest:
+      type: object
+      properties:
+        environment:
+          type: object
+          description: A dictionary of client runtime environment properties.
+          additionalProperties:
+            type: string
+          example:
+            javaVmSpecificationVersion: 1.8
+            javaVmVersion: 2.8
+            javaVmName: IBM J9 VM
+            clientOs: linux
+        connectorType:
+          type: string
+          description: The paired system type that the connector supplies activity data to.
+        connectorVersion:
+          type: string
+          description: The connector version.
+        connectorLibraryVersion:
+          type: string
+          description: The WiseTime connector library version that the connector is using.
+        clientTimestamp:
+          type: integer
+          format: int64
+          description: The current system timestamp from epoch of the client environment.
+        clientTimeZoneOffset:
+          type: string
+          description: The local time offset of the environment that the client is running within.
+    ManagedConfigResponse:
+      type: object
+      properties:
+        serviceId:
+          type: string
+          description: Service ID that identifies the security credentials.
+        serviceKey:
+          type: string
+          description: Secret key for the security credentials.
+        serviceIdExpiry:
+          type: string
+          format: date-time
+          description: The date which the current credentials will expire.
+        serviceSessionToken:
+          type: string
+          description: The token that the service must pass to the API to use the security credentials.
+        groupName:
+          type: string
+          description: The name of the group for logging.
+        regionName:
+          description: Geographic area for the logging.
+          type: string
+        connectorConfiguration:
+          type: object
+          description: A dictionary of connector configuration properties.
+          additionalProperties:
+            type: string
+          example:
+            ADD_SUMMARY_TO_NARRATIVE: true
+    HealthCheckFailureNotify:
+      type: object
+      properties:
+        errorType:
+          type: string
+          description: >
+            Type of non-transient health check failure that occurred.
+          enum:
+            - UNKNOWN
+            - TARGET_UNREACHABLE
+            - TARGET_AUTH_FAILURE
+            - TARGET_PERMISSIONS_FAILURE
+            - TARGET_SUBSCRIPTION_FAILURE
+        userErrorMessage:
+          type: string
+          description: >
+            Error message shown to team members when trying to post time (until the failure is rescinded / cleared).
+            Optional, will overwrite the default error message of the provided errorType.
+    TimeGroup:
+      type: object
+      properties:
+        callerKey:
+          type: string
+          description: A caller key that you specified when registering your webhook. You can use this field to authenticate that the request comes from WiseTime. This field is only set if WiseTime is calling your webhook. It is not relevant when you poll WiseTime for posted time.
+        groupId:
+          type: string
+          description: A unique identifier of the TimeGroup being sent to the webhook receiver.
+        description:
+          type: string
+          description: User description for this time group. This may be blank if the user did not provide a narrative when posting their time.
+        formattedNarrative:
+          type: string
+          description: A narrative for this time group including any custom formatting. This may be blank.
+        totalDurationSecs:
+          type: integer
+          description: >
+            By default this is the sum of the time log durations in seconds.
+            It may have been edited by user before posting.  To calculate the unmodified total duration, add the items from the `timeRows` array.
+        totalDurationHours:
+          type: number
+          format: double
+          description: >
+            The totalDurationSecs value expressed as a double value, with a maximum precision of 2 decimal places.
+        tzOffsetMins:
+          type: integer
+          format: int32
+          description: Timezone offset in minutes of the recorded activity.  For example, UTC-2 will be shown as a TZ offset value of -120, or UTC+5.5 being equal to 330.
+        localDate:
+          type: string
+          format: date
+          description: The date in the user's time zone.  For example, 2017-07-21.
+        timestamp:
+          type: integer
+          format: int64
+          description: The timestamp assigned to the group (milliseconds since epoch).
+        groupName:
+          type: string
+          description: >
+            The default is empty. It is an optional field, and should not be assumed to be available.
+        narrativeType:
+          type: string
+          enum:
+            - NARRATIVE_AND_TIME_ROW_ACTIVITY_DESCRIPTIONS
+            - NARRATIVE_ONLY
+          description: >
+            The user may request that the time row activity information be ignored by the web hook receiver.
+            In the usual case, the default narrative type is `NARRATIVE_AND_TIME_ROW_ACTIVITY_DESCRIPTIONS`.
+        status:
+          type: string
+          enum:
+            - PENDING
+            - SUCCESS
+        submissionTime:
+          type: integer
+          format: int64
+          description: Time when the user posted the time group. Measured in milliseconds since the Epoch.
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+          description: >
+            An array of tags that were assigned to the time group. An empty array will be sent if there were no assigned tags.
+            There will be not more than one tag in this array. This field is an array for backwards API compatibility, it will
+            be deprecated in the future and substituted by a unary field.
+        timeRows:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeRow'
+          description: Activity time rows posted with the group. There will always be at least one time row posted.
+        activityType:
+          $ref: '#/components/schemas/GroupActivityType'
+        user:
+          $ref: '#/components/schemas/User'
+        originatingUser:
+          $ref: '#/components/schemas/User'
+        durationSplitStrategy:
+          deprecated: true
+          type: string
+          enum:
+            - DIVIDE_BETWEEN_TAGS
+            - WHOLE_DURATION_TO_EACH_TAG
+          description: >
+            This field should be ignored, there can be at most one tag per group.
+    Tag:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the tag.
+        path:
+          type: string
+          description: Value from UpsertTagRequest.
+        description:
+          type: string
+          description: >
+            Optional. The text that is displayed to the user next to the name in the user interface.
+            For example, this could take the form of a matter description or a project name.
+        externalId:
+          type: string
+          description: >
+            The ID of the external entity for which the tag was created.
+            The external ID is used to post time against the correct record in the connected system.
+    TagCategory:
+      type: object
+      description: >
+        A tag category groups related tags together.
+        Tag categories can be automatically applied to time rows and time groups by auto-tagging. However, tag categories cannot be posted.
+        The purpose of tag categories is to give the user as much help as possible with auto-tagging if we are unable to match a specific tag but are able to match on a group of tags. The user then just needs to select one of the tags in the category, rather than having to start with a fresh tag search.
+      properties:
+        id:
+          type: string
+          description: The WiseTime resource ID of the tag category. This field is required when updating a tag category, but should not be set when creating one.
+        externalId:
+          type: string
+          description: The ID of the tag category in the connected system.
+        label:
+          type: string
+          description: >
+            The display label for the tag category.
+        description:
+          type: string
+          description: A description for the tag category.
+        keywords:
+          description: The tag category will automatically be applied to time rows if one of its keywords match the row content.
+          type: array
+          items:
+            type: string
+      required:
+        - externalId
+        - label
+    BatchUpsertTagCategoryRequest:
+      type: object
+      properties:
+        tagCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagCategory'
+          description: An array of tag categories to be created/updated.
+    BatchUpsertTagCategoryResponse:
+      type: object
+      properties:
+        tagCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagCategory'
+          description: An array of tag categories that were created/updated.
+    DeleteTagCategoryRequest:
+      type: object
+      properties:
+        externalId:
+          description: "The ID of the tag category in the connected system, for the tag category to delete"
+          type: string
+    DeleteTagCategoryResponse:
+      type: object
+    ActivityType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: >
+            Activity type id/code from the connected system. Must be unique.
+            It's the only property used to determine if the activity type already exists.
+        label:
+          type: string
+          description: >
+            Activity type short name from the connected system.
+            It will be used to populate the `WiseTime console label` column, if the activity type doesn't exist yet. Otherwise the existing value will be kept.
+        description:
+          type: string
+          description: >
+            Activity type description from the connected system.
+        enableIfNew:
+          type: boolean
+          description: >
+            Whether activity type should be enabled in WiseTime if it is being synced for the first time. If the activity type already exists in WiseTime, its enabled state will remain unchanged.
+            If false, the activity type will be created, but will not be available in the WiseTime console until it is enabled in team settings. Defaults to false.
+        reenableIfArchived:
+          type: boolean
+          description: >
+            Reactivate the activity type if it was deleted or if it was previously archived by a user. If true - takes precedence over enableIfNewf flag. Defaults to false.
+    GroupActivityType:
+      type: object
+      description: Contains information about the activity type attached to the time group (if any).
+      properties:
+        code:
+          type: string
+          description: >
+            Activity type id/code from the connected system. Must be unique.
+            It's the only property used to determine if the activity type already exists.
+        label:
+          type: string
+          description: >
+            Activity type short name from the connected system.
+            It will be used to populate the `WiseTime console label` column, if the activity type doesn't exist yet. Otherwise the existing value will be kept.
+    User:
+      type: object
+      description: Information about the user who posted the time group.
+      properties:
+        userId:
+          type: string
+          description: The user id of the user.
+        name:
+          type: string
+          description: The name of the user.
+        email:
+          type: string
+          description: The user’s email address.
+        externalId:
+          type: string
+          description: The ID that the connector should use to refer to the user when talking to the system being integrated with WiseTime. This is set through the user’s team membership.
+        businessRole:
+          type: string
+          description: The user’s role, set through their team membership.
+        experienceWeightingPercent:
+          type: integer
+          description: >
+            Experience rating assigned to the user. This is a percentage value, between 0 and 100.
+            You can use this value to apply a multiplier to the total posted time duration before sending it to the connected system.
+            For example, you may want to send 20 minutes instead of 40 minutes for a junior employee whose experience rating is 50%.
+    SubscribeRequest:
+      type: object
+      properties:
+        callbackUrl:
+          type: string
+          description: The webhook URL that WiseTime will call to notify you of user posted time.
+        callerKey:
+          type: string
+          description: WiseTime will send this key back to you when it calls your webhook. That way you can authenticate that the request comes from WiseTime.
+      required:
+        - callbackUrl
+    SubscribeResult:
+      type: object
+    RegisterFetchClientRequest:
+      type: object
+    RegisterFetchClientResult:
+      type: object
+    TeamInfoResult:
+      type: object
+      properties:
+        teamName:
+          type: string
+    TimeGroupStatus:
+      type: object
+      properties:
+        timeGroupId:
+          type: string
+          description: ID of the time group to be updated.
+        status:
+          type: string
+          enum:
+            - SUCCESS
+            - FAILURE
+            - RETRIABLE_FAILURE
+          description: >
+            This field describes the status of the posted time group.
+            On SUCCESS the time group will be marked as successfully posted.
+            On FAILURE the time group will be marked as failed and the attached message will displayed to the user.
+            On RETRIABLE_FAILURE the time group will be marked as temporary failed and scheduled for retry. The attached message might be displayed to the user.
+        message:
+          type: string
+          description: Reason for the failure, will be displayed to the user.
+        externalId:
+          type: string
+          description: An identifier in the connected system that relates to the posted time group.
+    TimeRow:
+      type: object
+      properties:
+        activity:
+          type: string
+          description: The activity performed, e.g. “Meeting”, “Microsoft Word”.
+        description:
+          type: string
+          description: A description of the activity, e.g. the filename of a wordprocessor document being worked on.
+        activityHour:
+          type: integer
+          description: The hour of the posted time in UTC. yyyyMMddhh
+        firstObservedInHour:
+          type: integer
+          description: >
+            The firstObservedInHour represents the minute in the activityHour when the activity was first observed.
+            It will be an integer value between 0 and 59.
+        durationSecs:
+          type: integer
+          description: The duration of the activity, in seconds.
+        submittedDate:
+          type: integer
+          format: int64
+          deprecated: true
+          description: Time when the activity was submitted by the user in UTC, in the format yyyyMMddHHmmSSsss.
+        modifier:
+          type: string
+          deprecated: true
+          description: >
+            A modifier for the time row. Modifiers can be selected by the user when posting time, and can be any string value that makes sense to the connected system when posted.
+            For example, a law firm might configure activity codes for the various activities that they have set up in their case management system, so that they can charge meetings
+            and court appearances at different rates. Effectively it's the human readable label for activityTypeCode.
+        activityTypeCode:
+          type: string
+          deprecated: true
+          description: >
+            Activity type of time row. It can be set by the user when posting time row. List of possible values is configured by administrators on the team settings page.
+        source:
+          type: string
+          enum:
+            - WT_DESKTOP
+            - USER_MANUAL_TIME
+          description: >
+            This field describes the origin of the posted.
+            Time logs can either come from the desktop client (WT_DESKTOP) or be created manually by the user (USER_MANUAL_TIME).
+        timezone_name:
+          type: string
+          description: IANA time zone of the user when the activity was created.  For example, Europe/Berlin.
+        timezone_offset_min:
+          type: integer
+          description: Timezone offset in minutes of the recorded activity.  For example, UTC-2 will be shown as a TZ offset value of -120, or UTC+5.5 being equal to 330.
+    UnsubscribeRequest:
+      type: object
+    UnsubscribeResult:
+      type: object
+    UnregisterFetchClientRequest:
+      type: object
+    UnregisterFetchClientResult:
+      type: object
+security:
+  # the API key is required for all operations
+  - ConnectApiKeyAuth: [ ]
