@@ -1,0 +1,934 @@
+{
+  "info": {
+    "_postman_id": "wisetime-connect-api-v1",
+    "name": "WiseTime Connect API",
+    "description": "# WiseTime Connect API\n\nUse the WiseTime Connect API to build connectors to your application.\n\n## Getting Started\n\n1. **Get your API Key** from WiseTime Console:\n   - Go to **Team Settings** → **Connectors**\n   - Create or select a connector\n   - Copy the **API Key**\n\n2. **Set up environment**:\n   - Import the companion environment file\n   - Set your `apiKey` variable value\n\n3. **Test connection**:\n   - Run **Get Team Info** request\n   - Expected: `200 OK` with your team name\n\n## Authentication\n\nAll requests require the `x-api-key` header with your connector API key.\n\n## Documentation\n\n- [Connect API Docs](https://wisetime.com/docs/connect/)\n- [Swagger UI](https://wisetime.com/docs/connect/api/)\n- [Posted Time Webhook](https://wisetime.com/docs/connect/posted-time-webhook/)\n\n## Support\n\ncontact@wisetime.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "x-api-key",
+        "type": "string"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}",
+        "type": "string"
+      },
+      {
+        "key": "in",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://wisetime.com/connect/api",
+      "type": "string",
+      "description": "WiseTime Connect API base URL"
+    },
+    {
+      "key": "apiKey",
+      "value": "",
+      "type": "string",
+      "description": "Your connector API key from Team Settings → Connectors"
+    }
+  ],
+  "item": [
+    {
+      "name": "Team Info",
+      "description": "Retrieve information about your WiseTime team.",
+      "item": [
+        {
+          "name": "Get Team Info",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"Response has teamName\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('teamName');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/team/info",
+              "host": ["{{baseUrl}}"],
+              "path": ["team", "info"]
+            },
+            "description": "Retrieve information about the team associated with your API key.\n\nUse this endpoint to verify your API key is working correctly."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/team/info",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["team", "info"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"teamName\": \"My Company Team\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tags",
+      "description": "Manage tags that can be applied to time entries. Tags represent projects, matters, or other entities from your connected system.",
+      "item": [
+        {
+          "name": "Create or Update Tag",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"PRJ-001\",\n  \"description\": \"Website Redesign Project\",\n  \"externalId\": \"project-12345\",\n  \"additionalKeywords\": [\"website\", \"redesign\", \"frontend\"],\n  \"url\": \"https://your-system.com/projects/12345\",\n  \"metadata\": {\n    \"Client\": \"Acme Corp\",\n    \"Billing Group\": \"billable\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tag",
+              "host": ["{{baseUrl}}"],
+              "path": ["tag"]
+            },
+            "description": "Create a new tag, or update the tag if it already exists.\n\n**Key fields:**\n- `name` (required): Unique tag identifier\n- `description`: Displayed in UI and search\n- `externalId`: ID in your connected system, sent with posted time\n- `additionalKeywords`: Auto-tagging keywords\n- `metadata`: Custom key-value pairs for reporting"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [{"key": "Content-Type", "value": "application/json"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"PRJ-001\",\n  \"description\": \"Website Redesign Project\",\n  \"externalId\": \"project-12345\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/tag",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["tag"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Batch Create or Update Tags",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tags\": [\n    {\n      \"name\": \"PRJ-001\",\n      \"description\": \"Website Redesign Project\",\n      \"externalId\": \"project-12345\"\n    },\n    {\n      \"name\": \"PRJ-002\",\n      \"description\": \"Mobile App Development\",\n      \"externalId\": \"project-12346\"\n    },\n    {\n      \"name\": \"PRJ-003\",\n      \"description\": \"API Integration\",\n      \"externalId\": \"project-12347\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tag/batch",
+              "host": ["{{baseUrl}}"],
+              "path": ["tag", "batch"]
+            },
+            "description": "Create new tags, or update existing in batch.\n\n**Limits:** Up to 2000 items per request.\n\n**Response:** Returns errors array if any tags failed validation."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Tag",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"PRJ-001\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tag/delete",
+              "host": ["{{baseUrl}}"],
+              "path": ["tag", "delete"]
+            },
+            "description": "Delete an existing tag.\n\nProvide either `name` or `id` to identify the tag to delete."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Tag Metadata",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tagName\": \"PRJ-001\",\n  \"metadataNames\": [\"Billing Group\", \"Client\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tag/metadata/delete",
+              "host": ["{{baseUrl}}"],
+              "path": ["tag", "metadata", "delete"]
+            },
+            "description": "Permanently delete specified metadata from an existing tag.\n\n**Note:** Metadata names are case sensitive."
+          },
+          "response": []
+        },
+        {
+          "name": "Add Keywords to Tag",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tagName\": \"PRJ-001\",\n  \"additionalKeywords\": [\"website\", \"redesign\", \"frontend\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tag/keyword",
+              "host": ["{{baseUrl}}"],
+              "path": ["tag", "keyword"]
+            },
+            "description": "Add one or more keywords to an existing tag.\n\nKeywords are used for auto-tagging: when keyword text appears in activity descriptions, the tag is automatically suggested."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Keyword from Tag",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tagName\": \"PRJ-001\",\n  \"keyword\": \"frontend\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tag/keyword/delete",
+              "host": ["{{baseUrl}}"],
+              "path": ["tag", "keyword", "delete"]
+            },
+            "description": "Delete an existing keyword from a tag."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tag Categories",
+      "description": "Manage tag categories that group related tags together. Categories help with auto-tagging when a specific tag cannot be matched.",
+      "item": [
+        {
+          "name": "Batch Create or Update Tag Categories",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tagCategories\": [\n    {\n      \"externalId\": \"category-projects\",\n      \"label\": \"Projects\",\n      \"description\": \"All project-related tags\",\n      \"keywords\": [\"project\", \"PRJ\"]\n    },\n    {\n      \"externalId\": \"category-clients\",\n      \"label\": \"Clients\",\n      \"description\": \"Client matter tags\",\n      \"keywords\": [\"client\", \"matter\"]\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tagcategory/batch",
+              "host": ["{{baseUrl}}"],
+              "path": ["tagcategory", "batch"]
+            },
+            "description": "Create new tag categories, or update existing in batch.\n\n**Limits:** Up to 2000 items per request.\n\n**Required fields:**\n- `externalId`: Unique identifier in your system\n- `label`: Display name\n\n**Note:** If category not found by externalId, it is created. No partial update - entire batch fails if any category is invalid."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Tag Category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"externalId\": \"category-projects\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tagcategory/delete",
+              "host": ["{{baseUrl}}"],
+              "path": ["tagcategory", "delete"]
+            },
+            "description": "Delete a tag category and all related tags.\n\n**Warning:** This will also delete all tags belonging to this category."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Activity Types",
+      "description": "Manage activity types (e.g., Meeting, Research, Court Appearance) that can be assigned to time entries.",
+      "item": [
+        {
+          "name": "Start Sync Session",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"Save syncSessionId\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.syncSessionId) {",
+                  "        pm.collectionVariables.set(\"syncSessionId\", jsonData.syncSessionId);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/activitytype/sync/start",
+              "host": ["{{baseUrl}}"],
+              "path": ["activitytype", "sync", "start"]
+            },
+            "description": "Start an activity types sync session.\n\nReturns a `syncSessionId` to use with batch uploads. When sync completes, activity types not updated during the session will be deleted.\n\n**Typical flow:**\n1. Start sync session\n2. Batch upsert activity types (with syncSessionId)\n3. Complete sync session"
+          },
+          "response": []
+        },
+        {
+          "name": "Batch Create or Update Activity Types",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activityTypes\": [\n    {\n      \"code\": \"MEET\",\n      \"label\": \"Meeting\",\n      \"description\": \"Client or internal meetings\",\n      \"enableIfNew\": true\n    },\n    {\n      \"code\": \"RESEARCH\",\n      \"label\": \"Research\",\n      \"description\": \"Research and analysis\",\n      \"enableIfNew\": true\n    },\n    {\n      \"code\": \"ADMIN\",\n      \"label\": \"Administration\",\n      \"description\": \"Administrative tasks\",\n      \"enableIfNew\": false\n    }\n  ],\n  \"syncSessionId\": \"{{syncSessionId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/activitytype/batch",
+              "host": ["{{baseUrl}}"],
+              "path": ["activitytype", "batch"]
+            },
+            "description": "Create new activity types, or update existing in batch.\n\n**Limits:** Up to 2000 items per request.\n\n**Key fields:**\n- `code` (required): Unique identifier\n- `label` (required): Display name\n- `enableIfNew`: Make available in console immediately\n- `syncSessionId`: Optional, from Start Sync Session"
+          },
+          "response": []
+        },
+        {
+          "name": "Complete Sync Session",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"syncSessionId\": \"{{syncSessionId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/activitytype/sync/complete",
+              "host": ["{{baseUrl}}"],
+              "path": ["activitytype", "sync", "complete"]
+            },
+            "description": "Complete an activity types sync session.\n\n**Effect:** Activity types not created/updated during this session will be deleted."
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Sync Session",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"syncSessionId\": \"{{syncSessionId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/activitytype/sync/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["activitytype", "sync", "cancel"]
+            },
+            "description": "Cancel an activity types sync session.\n\n**Effect:** No activity types are deleted. Session ID becomes invalid."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Posted Time",
+      "description": "Receive and process time posted by users. Choose between **Fetch Method** (polling) or **Webhook Method** (push notifications).",
+      "item": [
+        {
+          "name": "Fetch Method",
+          "description": "Poll WiseTime for posted time entries. Use this method when your system cannot receive webhooks.",
+          "item": [
+            {
+              "name": "Register Fetch Client",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/postedtime/registerfetchclient",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["postedtime", "registerfetchclient"]
+                },
+                "description": "Register intent to fetch posted time via polling.\n\nWiseTime will start recording posted time events for retrieval via the Fetch Posted Time endpoint.\n\n**Note:** A team can have either a fetch client OR a webhook, not both."
+              },
+              "response": []
+            },
+            {
+              "name": "Fetch Posted Time",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/postedtime?limit=25",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["postedtime"],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "25",
+                      "description": "Maximum entries to retrieve (default: 25)"
+                    }
+                  ]
+                },
+                "description": "Fetch posted time with pending status.\n\n**Long polling:** Connection held open up to 60 seconds until new time is posted.\n\n**Response:** Array of TimeGroup objects.\n\n**After processing:** Call Update Posted Time Status to mark as SUCCESS or FAILURE."
+              },
+              "response": [
+                {
+                  "name": "Success - With Posted Time",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/postedtime?limit=25",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["postedtime"],
+                      "query": [{"key": "limit", "value": "25"}]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [{"key": "Content-Type", "value": "application/json"}],
+                  "body": "[\n  {\n    \"groupId\": \"tg-abc123\",\n    \"description\": \"Working on website redesign\",\n    \"totalDurationSecs\": 3600,\n    \"totalDurationHours\": 1.0,\n    \"localDate\": \"2026-01-27\",\n    \"status\": \"PENDING\",\n    \"tags\": [\n      {\n        \"name\": \"PRJ-001\",\n        \"description\": \"Website Redesign Project\",\n        \"externalId\": \"project-12345\"\n      }\n    ],\n    \"user\": {\n      \"userId\": \"user-123\",\n      \"name\": \"John Smith\",\n      \"email\": \"john@example.com\",\n      \"externalId\": \"emp-456\"\n    },\n    \"timeRows\": [\n      {\n        \"activity\": \"Visual Studio Code\",\n        \"description\": \"index.html\",\n        \"durationSecs\": 1800,\n        \"source\": \"WT_DESKTOP\"\n      },\n      {\n        \"activity\": \"Google Chrome\",\n        \"description\": \"Stack Overflow - CSS Grid\",\n        \"durationSecs\": 1800,\n        \"source\": \"WT_DESKTOP\"\n      }\n    ]\n  }\n]"
+                }
+              ]
+            },
+            {
+              "name": "Update Posted Time Status",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"timeGroupId\": \"tg-abc123\",\n  \"status\": \"SUCCESS\",\n  \"message\": \"Time entry created in target system\",\n  \"externalId\": \"timeentry-789\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/postedtime/status",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["postedtime", "status"]
+                },
+                "description": "Update status of a fetched time group.\n\n**Status values:**\n- `SUCCESS`: Time processed successfully\n- `FAILURE`: Permanent failure, message shown to user\n- `RETRIABLE_FAILURE`: Temporary failure, will be retried\n\n**Note:** If not called within timeout, time group becomes available for re-fetch."
+              },
+              "response": []
+            },
+            {
+              "name": "Unregister Fetch Client",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/postedtime/unregisterfetchclient",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["postedtime", "unregisterfetchclient"]
+                },
+                "description": "Unregister fetch client, stop recording posted time for polling."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Webhook Method",
+          "description": "Receive posted time via webhook callbacks. WiseTime will POST to your URL when users post time.",
+          "item": [
+            {
+              "name": "Subscribe Webhook",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"callbackUrl\": \"https://your-system.com/wisetime/webhook\",\n  \"callerKey\": \"your-secret-key-for-verification\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/postedtime/subscribe",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["postedtime", "subscribe"]
+                },
+                "description": "Subscribe to posted time webhook notifications.\n\nWiseTime will POST TimeGroup data to your `callbackUrl` when users post time.\n\n**callerKey:** Sent back with each webhook call for request verification.\n\n**Your webhook response:**\n- `2XX`: Success\n- `400`: Permanent failure (no retry)\n- `5XX`: Transient error (will retry)"
+              },
+              "response": []
+            },
+            {
+              "name": "Unsubscribe Webhook",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/postedtime/unsubscribe",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["postedtime", "unsubscribe"]
+                },
+                "description": "Delete existing webhook subscription.\n\nWiseTime will stop calling your webhook when users post time."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "List Posted Time",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/postedtime/list?limit=100",
+              "host": ["{{baseUrl}}"],
+              "path": ["postedtime", "list"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100",
+                  "description": "Maximum items to return (1-500, default: 100)"
+                },
+                {
+                  "key": "submittedBefore",
+                  "value": "",
+                  "description": "Filter: only time groups submitted before this timestamp (ms since epoch)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List posted time groups with pending or success status.\n\nReturns time groups in descending order by submission time.\n\n**Note:** This is NOT long polling. Use for historical queries or dashboards."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Connector Management",
+      "description": "Endpoints for managed connector service and health monitoring.",
+      "item": [
+        {
+          "name": "Get Managed Config",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"connectorType\": \"my-connector\",\n  \"connectorVersion\": \"1.0.0\",\n  \"connectorLibraryVersion\": \"5.0.0\",\n  \"clientTimestamp\": 1706400000000,\n  \"clientTimeZoneOffset\": \"+10:00\",\n  \"environment\": {\n    \"javaVmVersion\": \"21.0.1\",\n    \"clientOs\": \"linux\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/team/managed/config",
+              "host": ["{{baseUrl}}"],
+              "path": ["team", "managed", "config"]
+            },
+            "description": "Retrieve configuration for managed connector service.\n\nUsed by WiseTime Connector library for cloud logging and configuration retrieval."
+          },
+          "response": []
+        },
+        {
+          "name": "Report Health Check Failure",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", () => pm.response.to.have.status(204));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"errorType\": \"TARGET_UNREACHABLE\",\n  \"userErrorMessage\": \"Cannot connect to target system. Please check your network settings.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/healthcheck/failure/notify",
+              "host": ["{{baseUrl}}"],
+              "path": ["healthcheck", "failure", "notify"]
+            },
+            "description": "Report a non-transient health check failure.\n\n**Error types:**\n- `UNKNOWN`\n- `TARGET_UNREACHABLE`\n- `TARGET_AUTH_FAILURE`\n- `TARGET_PERMISSIONS_FAILURE`\n- `TARGET_SUBSCRIPTION_FAILURE`\n\n**Effect:** Error message shown to users when posting time until failure is rescinded."
+          },
+          "response": []
+        },
+        {
+          "name": "Rescind Health Check Failure",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", () => pm.response.to.have.status(204));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/healthcheck/failure/rescind",
+              "host": ["{{baseUrl}}"],
+              "path": ["healthcheck", "failure", "rescind"]
+            },
+            "description": "Clear a previously reported health check failure.\n\n**Effect:** Users can post time normally again."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
